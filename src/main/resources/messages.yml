@@ -1,0 +1,13 @@
+prefix: "<white>[<gradient:#32a852:#32a8a2>MenuShops<white>] "
+
+command:
+  menushops:
+    create:
+      success: "<prefix>"
+    delete:
+      success:
+    edit:
+      additem:
+        success:
+      removeitem:
+        success:

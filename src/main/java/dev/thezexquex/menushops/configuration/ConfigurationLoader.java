@@ -1,73 +1,68 @@
 package dev.thezexquex.menushops.configuration;
 
+import dev.thezexquex.menushops.MenuShopsPlugin;
+import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.loader.AbstractConfigurationLoader;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.logging.Level;
+
 public class ConfigurationLoader {
-    /*
-    private final EssentialsPlugin plugin;
-    private HoconConfigurationLoader mainConfigurationLoader;
-    private YamlConfigurationLoader messageConfigurationLoader;
+    private final MenuShopsPlugin plugin;
     private ConfigurationNode mainConfigRootNode;
     private ConfigurationNode messageConfigRootNode;
 
-    public ConfigurationLoader(EssentialsPlugin plugin) {
+    public ConfigurationLoader(MenuShopsPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public void intiConfigurationLoader() {
-        var mainConfigPath = plugin.getDataFolder().toPath().resolve(Path.of("config.conf"));
-        mainConfigurationLoader = HoconConfigurationLoader
-                .builder()
-                .path(mainConfigPath)
-                .defaultOptions(opts -> opts.serializers(build -> build.register(Configuration.class, new ConfigurationTypeSerializer())))
-                .defaultOptions(opts -> opts.serializers(build -> build.register(SpawnSettings.class, new SpawnSettingsTypeSerializer())))
-                .defaultOptions(opts -> opts.serializers(build -> build.register(DataBaseSettings.class, new DatabaseSettingsTypeSerializer())))
-                .defaultOptions(opts -> opts.serializers(build -> build.register(RedisSettings.class, new RedisSettingsTypeSerializer())))
-                .defaultOptions(opts -> opts.serializers(build -> build.register(CountDownLine.class, new CountDownLineTypeSerializer())))
-                .defaultOptions(opts -> opts.serializers(build -> build.register(CountDownSettings.class, new CountDownSettingsTypeSerializer())))
-                .defaultOptions(opts -> opts.serializers(build -> build.register(TeleportSettings.class, new TeleportSettingsTypeSerializer())))
-                .defaultOptions(opts -> opts.serializers(build -> build.register(AFKSettings.class, new AFKSettingsTypeSerializer())))
-                .build();
-
-        var messageConfigPath = plugin.getDataFolder().toPath().resolve(Path.of("messages.yml"));
-        messageConfigurationLoader = YamlConfigurationLoader.builder().path(messageConfigPath).build();
-    }
-
-    public ConfigurationNode loadConfiguration() {
+    public Optional<ConfigurationNode> loadConfiguration(AbstractConfigurationLoader<CommentedConfigurationNode> configurationLoader) {
         try {
-            mainConfigRootNode = mainConfigurationLoader.load();
-        } catch (ConfigurateException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to load config.conf", e);
-            plugin.getServer().getPluginManager().disablePlugin(plugin);
-        }
-        return mainConfigRootNode;
-    }
-
-    public ConfigurationNode loadMessageConfiguration() {
-        try {
-            messageConfigRootNode = messageConfigurationLoader.load();
+            return Optional.of(configurationLoader.load());
         } catch (ConfigurateException e) {
             plugin.getLogger().log(Level.SEVERE, "Failed to load messages.yml", e);
-            plugin.getServer().getPluginManager().disablePlugin(plugin);
         }
-        return messageConfigRootNode;
+        return Optional.empty();
     }
 
-    public void saveDefaultConfigs() {
-        plugin.saveResource("config.conf", false);
-        plugin.saveResource("messages.yml", false);
+    public void saveDefaultConfigFile(Path filePath) {
+        var completePath = plugin.getDataFolder().toPath().resolve(filePath);
+        if (Files.exists(completePath)) {
+            return;
+        }
+
+        try (var resourceAsStream = getClass().getResourceAsStream("/" + filePath)) {
+            if (resourceAsStream == null) {
+                plugin.getLogger().log(
+                        Level.SEVERE, "Failed to save " + filePath + ". " +
+                                "The plugin developer tried to save a file that does not exist in the plugins jar file!"
+                );
+                return;
+            }
+            Files.createDirectories(completePath.getParent());
+            try (var outputStream = Files.newOutputStream(completePath)) {
+                resourceAsStream.transferTo(outputStream);
+            }
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to save " + filePath, e);
+        }
     }
 
-    public void saveConfiguration() {
+    public void saveConfiguration(
+            ConfigurationNode configurationNode,
+            Configuration configuration,
+            org.spongepowered.configurate.loader.ConfigurationLoader<ConfigurationNode> configurationLoader
+    ) {
         try {
-            mainConfigRootNode.set(plugin.configuration());
-            mainConfigurationLoader.save(mainConfigRootNode);
+            configurationNode.set(configuration);
+            configurationLoader.save(configurationNode);
         } catch (ConfigurateException e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to save config.conf", e);
+            plugin.getLogger().log(Level.SEVERE, "Failed to save configuration", e);
         }
     }
-
-    public ConfigurationNode mainConfigRootNode() {
-        return mainConfigRootNode;
-    }
-
-     */
 }

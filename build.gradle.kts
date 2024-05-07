@@ -19,6 +19,7 @@ repositories {
     maven("https://eldonexus.de/repository/maven-public")
     maven("https://repo.xenondevs.xyz/releases")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 }
 
 dependencies {
@@ -32,6 +33,7 @@ dependencies {
 
     compileOnly("io.papermc.paper", "paper-api", "1.20.4-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl", "VaultAPI", "1.7")
+    compileOnly("me.clip", "placeholderapi", "2.11.5")
 }
 
 java {

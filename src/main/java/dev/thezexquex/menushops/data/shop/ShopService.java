@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import de.eldoria.jacksonbukkit.JacksonPaper;
+import dev.thezexquex.menushops.MenuShopsPlugin;
 import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.value.Value;
@@ -16,10 +17,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,5 +73,26 @@ public class ShopService {
         } catch (ConfigurateException e) {
             logger.log(Level.WARNING, "Failed to load shop: " + shopIdentifyer, e);
         }
+    }
+
+    public Set<MenuShop> loadedShops() {
+        return loadedShops;
+    }
+
+    public List<String> loadedShopNames() {
+        return loadedShops.stream().map(MenuShop::identifyer).toList();
+    }
+
+    public void createShop(String shopName) {
+
+    }
+
+    public boolean deleteShop(String shopName) {
+        loadedShops.removeIf(menuShop -> menuShop.identifyer().equals(shopName));
+        return shopConfigsFolder.resolve(Paths.get(shopName + ".yml")).toFile().delete();
+    }
+
+    public Optional<MenuShop> getShop(String shopName) {
+        return loadedShops.stream().filter(menuShop -> menuShop.identifyer().equals(shopName)).findFirst();
     }
 }
