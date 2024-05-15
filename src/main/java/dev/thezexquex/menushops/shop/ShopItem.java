@@ -1,7 +1,14 @@
 package dev.thezexquex.menushops.shop;
 
 import dev.thezexquex.menushops.shop.value.Value;
+import dev.thezexquex.menushops.shop.value.ValueParser;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.inventory.ItemStack;
+import xyz.xenondevs.invui.item.Item;
+import xyz.xenondevs.invui.item.impl.SimpleItem;
+
+import java.util.List;
 
 public class ShopItem {
     private Value upperBoundValue;
@@ -32,5 +39,23 @@ public class ShopItem {
 
     public ItemStack itemStack() {
         return itemStack;
+    }
+
+    public Item toGuiItem() {
+        var modifiedItemStack = itemStack.clone();
+        var lore = List.of(
+                Component.text(""),
+                MiniMessage.miniMessage().deserialize("<r><gold>Preis: <gray>" + ValueParser.toPattern(lowerBoundValue))
+        );
+
+        if (modifiedItemStack.lore() == null) {
+            modifiedItemStack.lore(lore);
+        } else {
+            var temLore = modifiedItemStack.lore();
+            temLore.addAll(lore);
+            modifiedItemStack.lore(temLore);
+        }
+
+        return new SimpleItem(modifiedItemStack);
     }
 }

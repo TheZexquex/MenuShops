@@ -1,0 +1,5 @@
+title: "<yellow>Cooler Shop"
+items:
+  - item: 34817rufj1398rz1c85731z8549
+    upper-bound-value: "material_stone:64"
+    lower-bound-value: "material_stone:50"

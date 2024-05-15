@@ -3,11 +3,29 @@ prefix: "<white>[<gradient:#32a852:#32a8a2>MenuShops<white>] "
 command:
   menushops:
     create:
-      success: "<prefix>"
+      success: "<prefix><green> Der Shop <yellow><shop> <green>wurde erstellt"
     delete:
-      success:
+      success: "<prefix><green> Der Shop <yellow><shop> <green>wurde gelöscht"
     edit:
       additem:
         success:
       removeitem:
         success:
+
+exception:
+  invalid-syntax: "<red>Bitte benutze <yellow><valid-syntax>"
+  invalid-sender: "<red>Dieser Command darf nur von <yellow><valid-sender> <red>ausgeführt werden"
+  invalid-argument: "<red>Invalides Argument: <yellow><cause>"
+  no-permission: "<red>Dir fehlt die Berechtigung <yellow><missing-permission>"
+  argument-parse:
+    no-input: "<red>Kein Input angegeben"
+    boolean: "<yellow>'{input}' <red>ist kein boolean"
+    number: "'{input}' <red>is not a valid number in the range {min} to {max}"
+    char: "'{input}' is not a valid character"
+    enum: "'{input}' is not one of the following: {acceptableValues}"
+    string: "'{input}' is not a valid string of type {stringMode}"
+    uuid: "'{input}' is not a valid UUID"
+    regex: "'{input}' does not match '{pattern}'"
+    color: "'{input}' is not a valid color"
+    duration: "'{input}' is not a duration format"
+    value: "<red>Das ist kein korrektes Format für eine Value\n{error-mark}"

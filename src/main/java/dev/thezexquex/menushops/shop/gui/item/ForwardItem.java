@@ -1,9 +1,7 @@
 package dev.thezexquex.menushops.shop.gui.item;
 
-import dev.thezexquex.menushops.utils.MiniComponent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import dev.thezexquex.menushops.util.MiniComponent;
 import org.bukkit.Material;
-import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
 import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;

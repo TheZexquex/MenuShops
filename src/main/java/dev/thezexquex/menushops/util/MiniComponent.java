@@ -1,4 +1,4 @@
-package dev.thezexquex.menushops.utils;
+package dev.thezexquex.menushops.util;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;

@@ -1,10 +1,12 @@
 package dev.thezexquex.menushops.shop.gui;
 
+import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.gui.item.BackItem;
 import dev.thezexquex.menushops.shop.gui.item.ForwardItem;
-import dev.thezexquex.menushops.utils.MiniComponent;
+import dev.thezexquex.menushops.util.MiniComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
 import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.gui.structure.Structure;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MenuShopGui {
-    public static Window constructGui(Player player) {
+    public static Window constructGui(Player player, MenuShop menuShop) {
         List<Item> items = Arrays.stream(Material.values())
                 .filter(material -> !material.isAir() && material.isItem())
                 .map(material -> new SimpleItem(new ItemBuilder(material)))
@@ -45,15 +47,13 @@ public class MenuShopGui {
                 .addIngredient('>', forwardItem)
                 .addIngredient('B', buyBackItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
-                .setContent(items)
+                .setContent(menuShop.guiItems())
                 .build();
 
-        var window = Window.single()
+        return Window.single()
                 .setViewer(player)
                 .setGui(gui)
-                .setTitle(MiniComponent.of("<gradient:#fc9403:#fce803>Händler</gradient>"))
+                .setTitle(new AdventureComponentWrapper(menuShop.title()))
                 .build();
-
-        return window;
     }
 }

@@ -2,8 +2,9 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.7"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
+    id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
 group = "dev.thezexquex"
@@ -27,7 +28,7 @@ dependencies {
     implementation("org.spongepowered", "configurate-yaml", "4.1.2")
     implementation("org.incendo", "cloud-paper", "2.0.0-beta.2")
     implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.2")
-    implementation("xyz.xenondevs.invui", "invui", "1.27")
+    implementation("xyz.xenondevs.invui", "invui", "1.30")
     implementation("de.eldoria.jacksonbukkit", "paper", "1.2.0")
     implementation("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.14.2")
 
@@ -36,12 +37,7 @@ dependencies {
     compileOnly("me.clip", "placeholderapi", "2.11.5")
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-}
-
 bukkit {
-
     name = "MenuShops"
     version = "0.1.0"
     description = "The only menu shop plugin you need"
@@ -56,12 +52,14 @@ bukkit {
 
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
 
-    softDepend = listOf("Vault")
+    softDepend = listOf("Vault, PlaceholderAPI")
 
     defaultPermission = BukkitPluginDescription.Permission.Default.OP
 }
 
-
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
 
 tasks {
     getByName<Test>("test") {
@@ -72,6 +70,14 @@ tasks {
         options.encoding = "UTF-8"
     }
 
+    runServer {
+        minecraftVersion("1.20.4")
+
+        downloadPlugins {
+
+        }
+    }
+
     shadowJar {
         fun relocateDependency(from : String) = relocate(from, "$shadeBasePath$from")
 
@@ -80,6 +86,24 @@ tasks {
         relocateDependency("xyz.xenondevs.invui")
         relocateDependency("de.eldoria.jacksonbukkit")
         relocateDependency("com.fasterxml.jackson.dataformat")
+
+        /*
+        relocate("org.spongepowered", shadeBasePath + "org.spongepowered")
+        relocate("org.incendo", shadeBasePath + "org.incendo")
+        relocate("xyz.xenondevs.invui", shadeBasePath + "xyz.xenondevs.invui")
+        relocate("de.eldoria.jacksonbukkit", shadeBasePath + "de.eldoria.jacksonbukkit")
+        relocate("com.fasterxml.jackson.dataformat", shadeBasePath + "com.fasterxml.jackson.dataformat")
+
+         */
+    }
+
+    register<Copy>("copyToServer") {
+        val path = System.getenv("SERVER_DIR")
+        if (path.toString().isEmpty()) {
+            println("No SERVER_DIR env variable set")
+            return@register
+        }
+        from(shadowJar)
+        destinationDir = File(path.toString())
     }
 }
-

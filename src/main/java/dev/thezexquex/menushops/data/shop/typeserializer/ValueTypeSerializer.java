@@ -1,4 +1,4 @@
-package dev.thezexquex.menushops.data.shop;
+package dev.thezexquex.menushops.data.shop.typeserializer;
 
 import dev.thezexquex.menushops.shop.value.Value;
 import dev.thezexquex.menushops.shop.value.ValueParser;
@@ -18,7 +18,7 @@ public class ValueTypeSerializer implements TypeSerializer<Value> {
     @Override
     public void serialize(Type type, @Nullable Value value, ConfigurationNode node) throws SerializationException {
         if (value != null) {
-            node.set(ValueParser.toPatterm(value));
+            node.set(ValueParser.toPattern(value));
         }
     }
 }

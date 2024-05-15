@@ -1,5 +1,6 @@
-package dev.thezexquex.menushops.shop.value;
+package dev.thezexquex.menushops.shop.value.values;
 
+import dev.thezexquex.menushops.shop.value.Value;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -12,17 +13,17 @@ public class MaterialValue extends Value {
     }
 
     @Override
-    void withdraw(Player player, boolean stack) {
+    public void withdraw(Player player, boolean stack) {
 
     }
 
     @Override
-    void deposit(Player player, boolean stack) {
+    public void deposit(Player player, boolean stack) {
 
     }
 
     @Override
-    boolean hasEnough(Player player, boolean stack) {
+    public boolean hasEnough(Player player, boolean stack) {
         return false;
     }
 

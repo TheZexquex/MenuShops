@@ -9,9 +9,9 @@ public abstract class Value {
         this.amount = amount;
     }
 
-    abstract void withdraw(Player player, boolean stack);
-    abstract void deposit(Player player, boolean stack);
-    abstract boolean hasEnough(Player player, boolean stack);
+    public abstract void withdraw(Player player, boolean stack);
+    public abstract void deposit(Player player, boolean stack);
+    public abstract boolean hasEnough(Player player, boolean stack);
 
     public int amount() {
         return amount;

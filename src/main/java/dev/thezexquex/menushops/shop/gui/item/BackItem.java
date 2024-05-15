@@ -1,6 +1,6 @@
 package dev.thezexquex.menushops.shop.gui.item;
 
-import dev.thezexquex.menushops.utils.MiniComponent;
+import dev.thezexquex.menushops.util.MiniComponent;
 import org.bukkit.Material;
 import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.item.ItemProvider;

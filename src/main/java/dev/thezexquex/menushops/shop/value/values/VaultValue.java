@@ -1,5 +1,6 @@
-package dev.thezexquex.menushops.shop.value;
+package dev.thezexquex.menushops.shop.value.values;
 
+import dev.thezexquex.menushops.shop.value.Value;
 import org.bukkit.entity.Player;
 
 public class VaultValue extends Value {
