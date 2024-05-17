@@ -17,22 +17,18 @@ repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://jitpack.io")
-    maven("https://eldonexus.de/repository/maven-public")
     maven("https://repo.xenondevs.xyz/releases")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 }
 
 dependencies {
-    implementation("org.spongepowered", "configurate-hocon", "4.1.2")
-    implementation("org.spongepowered", "configurate-yaml", "4.1.2")
-    implementation("org.incendo", "cloud-paper", "2.0.0-beta.2")
-    implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.2")
+    implementation("org.spongepowered", "configurate-yaml", "4.2.0-SNAPSHOT")
+    implementation("org.incendo", "cloud-paper", "2.0.0-beta.7")
+    implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.7")
     implementation("xyz.xenondevs.invui", "invui", "1.30")
-    implementation("de.eldoria.jacksonbukkit", "paper", "1.2.0")
-    implementation("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.14.2")
 
-    compileOnly("io.papermc.paper", "paper-api", "1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper", "paper-api", "1.20.6-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl", "VaultAPI", "1.7")
     compileOnly("me.clip", "placeholderapi", "2.11.5")
 }
@@ -58,7 +54,7 @@ bukkit {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 tasks {
@@ -71,10 +67,12 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.20.4")
+        minecraftVersion("1.20.6")
 
         downloadPlugins {
-
+            url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
+            //hangar("PlaceholderAPI", "2.11.5")
+            jvmArgs("-Dcom.mojang.eula.agree=true")
         }
     }
 
@@ -86,15 +84,6 @@ tasks {
         relocateDependency("xyz.xenondevs.invui")
         relocateDependency("de.eldoria.jacksonbukkit")
         relocateDependency("com.fasterxml.jackson.dataformat")
-
-        /*
-        relocate("org.spongepowered", shadeBasePath + "org.spongepowered")
-        relocate("org.incendo", shadeBasePath + "org.incendo")
-        relocate("xyz.xenondevs.invui", shadeBasePath + "xyz.xenondevs.invui")
-        relocate("de.eldoria.jacksonbukkit", shadeBasePath + "de.eldoria.jacksonbukkit")
-        relocate("com.fasterxml.jackson.dataformat", shadeBasePath + "com.fasterxml.jackson.dataformat")
-
-         */
     }
 
     register<Copy>("copyToServer") {
