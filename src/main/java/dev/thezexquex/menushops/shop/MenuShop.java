@@ -3,6 +3,7 @@ package dev.thezexquex.menushops.shop;
 import dev.thezexquex.menushops.message.Messenger;
 import dev.thezexquex.menushops.shop.gui.DefaultValues;
 import net.kyori.adventure.text.Component;
+import su.nightexpress.coinsengine.api.CoinsEngineAPI;
 import xyz.xenondevs.invui.item.Item;
 
 import java.util.*;
@@ -74,8 +75,10 @@ public class MenuShop {
         items.put(items.values().size(), shopItem);
     }
 
-    public void removeItem(int id) {
+    public boolean removeItem(int id) {
+        var exists = items.containsKey(id);
         items.remove(id);
+        return exists;
     }
 
     public void editItem(int id, ItemEditInfo itemEditInfo) {
@@ -93,7 +96,7 @@ public class MenuShop {
 
     public HashMap<Integer, Item> guiItems(Messenger messenger) {
         var guiItems = new HashMap<Integer, Item>();
-        items.forEach((integer, shopItem) -> guiItems.put(integer, shopItem.toGuiItem(messenger)));
+        items.forEach((integer, shopItem) -> guiItems.put(integer, shopItem.toGuiItem(messenger, integer, this)));
 
         return guiItems;
     }

@@ -2,15 +2,19 @@ prefix: "<white>[<gradient:#32a852:#32a8a2>MenuShops<white>] "
 
 command:
   menushops:
+    reload:
+      attempt: "<prefix><gray>Attempting to reload..."
+      success: "<prefix><green>Finished reloading config and shops!"
+      error: "<prefix><red>Error while reloading config and shops!"
     create:
-      success: "<prefix><green> Der Shop <yellow><shop> <green>wurde erstellt"
+      success: "<prefix><green>Der Shop <yellow><shop> <green>wurde erstellt"
     delete:
-      success: "<prefix><green> Der Shop <yellow><shop> <green>wurde gelöscht"
+      success: "<prefix><green>Der Shop <yellow><shop> <green>wurde gelöscht"
     edit:
       additem:
-        success:
+        success: "<prefix><green>Du hast das Item erfolgreich hinzugefügt"
       removeitem:
-        success:
+        success: "<prefix><green>Du hast das Item erfolgreich entfernt"
 
 gui:
   item:
@@ -25,6 +29,12 @@ gui:
     coinsengine:
       money: "<gold><amount> $"
       votecoins: "<gold><amount> VC"
+
+action:
+  buy:
+    success: "<prefix><green>Du hast <gold><amount> <gray>x <yellow><item-name> <green>für <price> <green>gekauft!"
+    inventory-full: "<prefix><red>Dein Inventar ist voll"
+    price-too-high: "<prefix><red>Du kannst dir dieses Item nicht leisten"
 
 exception:
   invalid-syntax: "<red>Bitte benutze <yellow><valid-syntax>"

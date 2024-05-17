@@ -36,6 +36,12 @@ public class MenuShopsPlugin extends JavaPlugin {
     public void onEnable() {
         registerCommands();
 
+        reload();
+
+        new MenuShopCommand(this).register(commandManager);
+    }
+
+    public void reload() {
         this.pluginHookService = new PluginHookService(getServer());
         this.pluginHookService.register(this, new PlaceholderApiHook());
 
@@ -53,8 +59,6 @@ public class MenuShopsPlugin extends JavaPlugin {
         } catch (IOException e) {
             getLogger().log(Level.WARNING, "Failed to load shop configurations", e);
         }
-
-        new MenuShopCommand(this).register(commandManager);
     }
 
     private void registerCommands() {

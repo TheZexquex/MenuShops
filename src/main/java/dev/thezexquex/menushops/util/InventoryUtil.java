@@ -9,7 +9,7 @@ import java.util.Objects;
 public class InventoryUtil {
 
     public static boolean hasEnoughItems(Player player, ItemStack itemStack, int amount) {
-        var possibleItems = Arrays.stream(player.getInventory().getContents())
+        var possibleItems = Arrays.stream(player.getInventory().getStorageContents())
                 .filter(Objects::nonNull)
                 .filter(item -> item.isSimilar(itemStack));
 
@@ -19,22 +19,29 @@ public class InventoryUtil {
 
     public static void removeSpecificItemCount(Player player, ItemStack itemStack, int amount) {
         var countToRemove = amount;
-        for (ItemStack content : player.getInventory().getContents()) {
+        var left = amount;
+        for (ItemStack content : player.getInventory().getStorageContents()) {
+            if (countToRemove == 0) {
+                return;
+            }
+            left = countToRemove;
             if (content != null && content.isSimilar(itemStack)) {
-                if (countToRemove == 0) {
-                    return;
+                for (int i = left; i > 0; i--) {
+                    if (countToRemove == 0) {
+                        return;
+                    }
+                    countToRemove--;
+                    if (content.getAmount() == 1) {
+                        player.getInventory().remove(content);
+                        break;
+                    }
+                    content.setAmount(content.getAmount() - 1);
                 }
-                if (countToRemove >= content.getAmount()) {
-                    countToRemove -= content.getAmount();
-                    player.getInventory().remove(itemStack);
-                    continue;
-                }
-                content.setAmount(content.getAmount() - countToRemove);
             }
         }
     }
 
     public static boolean hasSpaceInInventory(Player player) {
-        return Arrays.stream(player.getInventory().getContents()).noneMatch(Objects::isNull);
+        return Arrays.stream(player.getInventory().getStorageContents()).anyMatch(Objects::isNull);
     }
 }

@@ -28,7 +28,7 @@ public class MenuShopCommand extends BaseCommand {
 
     @Override
     public void register(CommandManager<CommandSender> commandManager) {
-        commandManager.command(commandManager.commandBuilder("menushop")
+        commandManager.command(commandManager.commandBuilder("menushops")
                 .permission("menushops.command.menushops.open")
                 .literal("open")
                 .senderType(Player.class)
@@ -37,7 +37,7 @@ public class MenuShopCommand extends BaseCommand {
                 .handler(this::handleOpen)
         );
 
-        commandManager.command(commandManager.commandBuilder("menushop")
+        commandManager.command(commandManager.commandBuilder("menushops")
                 .permission("menushops.command.menushops.create")
                 .literal("create")
                 .senderType(Player.class)
@@ -46,7 +46,7 @@ public class MenuShopCommand extends BaseCommand {
                 .handler(this::handleCreate)
         );
 
-        commandManager.command(commandManager.commandBuilder("menushop")
+        commandManager.command(commandManager.commandBuilder("menushops")
                 .permission("menushops.command.menushops.delete")
                 .literal("delete")
                 .required("shop-name", stringParser(), (context, input) ->
@@ -54,7 +54,7 @@ public class MenuShopCommand extends BaseCommand {
                 .handler(this::handleDelete)
         );
 
-        commandManager.command(commandManager.commandBuilder("menushop")
+        commandManager.command(commandManager.commandBuilder("menushops")
                 .senderType(Player.class)
                 .permission("menushops.command.menushops.edit.additem")
                 .literal("edit")
@@ -66,7 +66,7 @@ public class MenuShopCommand extends BaseCommand {
                 .handler(this::handleEditAddItem)
         );
 
-        commandManager.command(commandManager.commandBuilder("menushop")
+        commandManager.command(commandManager.commandBuilder("menushops")
                 .senderType(Player.class)
                 .literal("edit")
                 .permission("menushops.command.menushops.edit.removeitem")
@@ -77,6 +77,21 @@ public class MenuShopCommand extends BaseCommand {
                 .handler(this::handleEditRemoveItem)
 
         );
+
+        commandManager.command(commandManager.commandBuilder("menushops")
+                .literal("reload")
+                .permission("menushops.command.menushops.reload")
+                .handler(this::handleReload)
+
+        );
+    }
+
+    private void handleReload(CommandContext<CommandSender> commandSenderCommandContext) {
+        plugin.messenger().sendMessage(commandSenderCommandContext.sender(),
+                NodePath.path("command", "menushops", "reload", "attempt"));
+        plugin.reload();
+        plugin.messenger().sendMessage(commandSenderCommandContext.sender(),
+                NodePath.path("command", "menushops", "reload", "success"));
     }
 
     private void handleOpen(CommandContext<Player> playerCommandContext) {
@@ -184,7 +199,10 @@ public class MenuShopCommand extends BaseCommand {
             plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "remove", "no-such-item"));
             return;
         }
-        shop.removeItem(itemId);
+        if (!shop.removeItem(itemId)) {
+            plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "remove", "no-such-item"));
+            return;
+        }
         if (!plugin.shopService().saveShop(shop)) {
             plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "error"));
             return;
