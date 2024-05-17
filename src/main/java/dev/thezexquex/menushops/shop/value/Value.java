@@ -1,6 +1,7 @@
 package dev.thezexquex.menushops.shop.value;
 
 import org.bukkit.entity.Player;
+import org.spongepowered.configurate.NodePath;
 
 public abstract class Value {
     protected final int amount;
@@ -16,4 +17,6 @@ public abstract class Value {
     public int amount() {
         return amount;
     }
+
+    public abstract NodePath formatNode();
 }

@@ -1,7 +1,8 @@
 package dev.thezexquex.menushops.shop;
 
+import dev.thezexquex.menushops.message.Messenger;
+import dev.thezexquex.menushops.shop.gui.DefaultValues;
 import net.kyori.adventure.text.Component;
-import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
 import xyz.xenondevs.invui.item.Item;
 
 import java.util.*;
@@ -9,19 +10,44 @@ import java.util.*;
 public class MenuShop {
     private String identifier;
     private Component title;
-    private final List<ShopItem> items;
+    private String[] structure;
+    private final HashMap<Integer, ShopItem> items;
 
     public MenuShop(String identifier, Component title) {
         this.identifier = identifier;
         this.title = title;
-        this.items = new ArrayList<>();
+        this.items = new HashMap<>();
+        this.structure = DefaultValues.STANDARD_STRUCTURE;
+    }
+
+    public MenuShop(String identifier, Component title, String[] structure) {
+        this.identifier = identifier;
+        this.title = title;
+        this.items = new HashMap<>();
+        this.structure = structure;
     }
 
 
-    public MenuShop(String identifier, Component title, List<ShopItem> items) {
+    public MenuShop(String identifier, Component title, HashMap<Integer, ShopItem> items) {
         this.identifier = identifier;
         this.title = title;
         this.items = items;
+        this.structure = DefaultValues.STANDARD_STRUCTURE;
+    }
+
+    public MenuShop(String identifier, Component title, HashMap<Integer, ShopItem> items, String[] structure) {
+        this.identifier = identifier;
+        this.title = title;
+        this.items = items;
+        this.structure = structure;
+    }
+
+    public void structure(String[] structure) {
+        this.structure = structure;
+    }
+
+    public String[] structure() {
+        return structure;
     }
 
     public String identifier() {
@@ -32,22 +58,20 @@ public class MenuShop {
         return title;
     }
 
-    public List<ShopItem> items() {
+    public HashMap<Integer, ShopItem> items() {
         return items;
     }
 
-    public MenuShop identifier(String identifier) {
+    public void identifier(String identifier) {
         this.identifier = identifier;
-        return this;
     }
 
-    public MenuShop title(Component title) {
+    public void title(Component title) {
         this.title = title;
-        return this;
     }
 
     public void addItem(ShopItem shopItem) {
-        items.add(shopItem);
+        items.put(items.values().size(), shopItem);
     }
 
     public void removeItem(int id) {
@@ -64,10 +88,13 @@ public class MenuShop {
             shopItem.upperBoundValue(itemEditInfo.newUpperBoundValue());
         }
 
-        items.add(shopItem);
+        items.put(id, shopItem);
     }
 
-    public List<Item> guiItems() {
-        return items.stream().map(ShopItem::toGuiItem).toList();
+    public HashMap<Integer, Item> guiItems(Messenger messenger) {
+        var guiItems = new HashMap<Integer, Item>();
+        items.forEach((integer, shopItem) -> guiItems.put(integer, shopItem.toGuiItem(messenger)));
+
+        return guiItems;
     }
 }

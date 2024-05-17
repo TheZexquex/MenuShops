@@ -33,7 +33,7 @@ public class MenuShopCommand extends BaseCommand {
                 .literal("open")
                 .senderType(Player.class)
                 .required("shop-name", stringParser(), (context, input) ->
-                        CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::simple).toList()))
+                        CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::suggestion).toList()))
                 .handler(this::handleOpen)
         );
 
@@ -50,7 +50,7 @@ public class MenuShopCommand extends BaseCommand {
                 .permission("menushops.command.menushops.delete")
                 .literal("delete")
                 .required("shop-name", stringParser(), (context, input) ->
-                        CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::simple).toList()))
+                        CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::suggestion).toList()))
                 .handler(this::handleDelete)
         );
 
@@ -60,7 +60,7 @@ public class MenuShopCommand extends BaseCommand {
                 .literal("edit")
                 .literal("additem")
                 .required("shop-name", stringParser(), (context, input) ->
-                        CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::simple).toList()))
+                        CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::suggestion).toList()))
                 .required("lower-bound", quotedStringParser())
                 .required("upper-bound", quotedStringParser())
                 .handler(this::handleEditAddItem)
@@ -69,9 +69,10 @@ public class MenuShopCommand extends BaseCommand {
         commandManager.command(commandManager.commandBuilder("menushop")
                 .senderType(Player.class)
                 .literal("edit")
+                .permission("menushops.command.menushops.edit.removeitem")
                 .literal("removeitem")
                 .required("shop-name", stringParser(), (context, input) ->
-                        CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::simple).toList()))
+                        CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::suggestion).toList()))
                 .required("id", integerParser())
                 .handler(this::handleEditRemoveItem)
 
@@ -90,7 +91,7 @@ public class MenuShopCommand extends BaseCommand {
 
         var shop = shopOpt.get();
 
-        MenuShopGui.constructGui(player, shop).open();
+        MenuShopGui.constructGui(player, shop, plugin.messenger()).open();
     }
 
     private void handleCreate(CommandContext<Player> playerCommandContext) {
@@ -130,7 +131,7 @@ public class MenuShopCommand extends BaseCommand {
         var shop = shopOpt.get();
 
         var lowerBoundValueParserResult = ValueParser.validate(lowerBoundPattern);
-        var upperBoundValueParserResult = ValueParser.validate(lowerBoundPattern);
+        var upperBoundValueParserResult = ValueParser.validate(upperBoundPattern);
 
         if (lowerBoundValueParserResult.valueParserResultType() != ValueParser.ValueParserResultType.VALID) {
             sender.sendRichMessage("<red>Error while parsing lower-bound-value: " + lowerBoundValueParserResult.valueParserResultType());
@@ -139,7 +140,7 @@ public class MenuShopCommand extends BaseCommand {
         }
 
         if (upperBoundValueParserResult.valueParserResultType() != ValueParser.ValueParserResultType.VALID) {
-            sender.sendRichMessage("<red>Error while parsing upper-bound-value: " + lowerBoundValueParserResult.valueParserResultType());
+            sender.sendRichMessage("<red>Error while parsing upper-bound-value: " + upperBoundValueParserResult.valueParserResultType());
             sender.sendRichMessage("<red>Invalid Pattern: " + ValueArgumentParser.buildErrorMark(upperBoundPattern, upperBoundValueParserResult));
             return;
         }
@@ -159,6 +160,10 @@ public class MenuShopCommand extends BaseCommand {
         }
 
         shop.addItem(new ShopItem(itemStack, lowerBoundValue, upperBoundValue));
+        if (!plugin.shopService().saveShop(shop)) {
+            plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "error"));
+            return;
+        }
         plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "add", "success"));
     }
 
@@ -180,7 +185,10 @@ public class MenuShopCommand extends BaseCommand {
             return;
         }
         shop.removeItem(itemId);
-
+        if (!plugin.shopService().saveShop(shop)) {
+            plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "error"));
+            return;
+        }
         plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "remove", "success"));
     }
 }

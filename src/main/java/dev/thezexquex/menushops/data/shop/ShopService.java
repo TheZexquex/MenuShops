@@ -8,6 +8,7 @@ import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.value.Value;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
@@ -113,11 +114,16 @@ public class ShopService {
         }
     }
 
+    public boolean saveShop(MenuShop menuShop) {
+        return saveShop(menuShop, loadedShops.get(menuShop));
+    }
+
     private YamlConfigurationLoader shopConfigLoader(Path shopPath) {
         return YamlConfigurationLoader.builder()
                 .defaultOptions(opts -> opts.serializers(build -> build.register(ShopItem.class, new ShopItemTypeSerializer())))
                 .defaultOptions(opts -> opts.serializers(build -> build.register(Value.class, new ValueTypeSerializer())))
                 .defaultOptions(opts -> opts.serializers(builder -> builder.register(MenuShop.class, new MenuShopTypeSerializer())))
+                .nodeStyle(NodeStyle.BLOCK)
                 .path(shopPath)
                 .build();
     }

@@ -2,10 +2,13 @@ package dev.thezexquex.menushops.shop.value.values;
 
 import dev.thezexquex.menushops.shop.value.Value;
 import org.bukkit.entity.Player;
+import org.spongepowered.configurate.NodePath;
 
 public class CoinsEngineValue extends Value {
-    public CoinsEngineValue(int amount) {
+    private final String currency;
+    public CoinsEngineValue(int amount, String currency) {
         super(amount);
+        this.currency = currency;
     }
 
     @Override
@@ -21,5 +24,14 @@ public class CoinsEngineValue extends Value {
     @Override
     public boolean hasEnough(Player player, boolean stack) {
         return false;
+    }
+
+    @Override
+    public NodePath formatNode() {
+        return NodePath.path("gui", "value-format", "coinsengine", currency);
+    }
+
+    public String currency() {
+        return currency;
     }
 }

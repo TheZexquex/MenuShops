@@ -1,5 +1,6 @@
 package dev.thezexquex.menushops.shop.gui;
 
+import dev.thezexquex.menushops.message.Messenger;
 import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.gui.item.BackItem;
 import dev.thezexquex.menushops.shop.gui.item.ForwardItem;
@@ -20,21 +21,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MenuShopGui {
-    public static Window constructGui(Player player, MenuShop menuShop) {
+    public static Window constructGui(Player player, MenuShop menuShop, Messenger messenger) {
         List<Item> items = Arrays.stream(Material.values())
                 .filter(material -> !material.isAir() && material.isItem())
                 .map(material -> new SimpleItem(new ItemBuilder(material)))
                 .collect(Collectors.toList());
 
 
-        var structure = new Structure(
-                "# # # # # # # # #",
-                "# . . . . . . . #",
-                "# . . . . . . . #",
-                "# . . . . . . . #",
-                "# . . . . . . . #",
-                "# # < # B # > # #"
-        );
+        var structure = new Structure(menuShop.structure());
 
         var outlineItem = new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE).setDisplayName("");
         var forwardItem = new ForwardItem();
@@ -47,7 +41,7 @@ public class MenuShopGui {
                 .addIngredient('>', forwardItem)
                 .addIngredient('B', buyBackItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
-                .setContent(menuShop.guiItems())
+                .setContent(menuShop.guiItems(messenger).values().stream().toList())
                 .build();
 
         return Window.single()

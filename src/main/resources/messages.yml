@@ -12,6 +12,20 @@ command:
       removeitem:
         success:
 
+gui:
+  item:
+    buy:
+      lore:
+        - ""
+        - "<!i><gray>Preis: <price>"
+        - "<!i><gray>Linksklick: kaufen"
+  value-format:
+    material: "<gold><amount> <gray>x <gold><material>"
+    vault-money: "<gold><amount> <gray>x <gold><material>"
+    coinsengine:
+      money: "<gold><amount> $"
+      votecoins: "<gold><amount> VC"
+
 exception:
   invalid-syntax: "<red>Bitte benutze <yellow><valid-syntax>"
   invalid-sender: "<red>Dieser Command darf nur von <yellow><valid-sender> <red>ausgeführt werden"
