@@ -19,12 +19,12 @@ import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
-public class BuyItem extends AbstractItem {
+public class BuysItem extends AbstractItem {
     private final ItemStack itemStack;
     private final MenuShop menuShop;
     private final Messenger messenger;
 
-    public BuyItem(ItemStack itemStack, MenuShop menuShop, Messenger messenger) {
+    public BuysItem(ItemStack itemStack, MenuShop menuShop, Messenger messenger) {
         this.itemStack = itemStack;
         this.menuShop = menuShop;
         this.messenger = messenger;
@@ -38,7 +38,10 @@ public class BuyItem extends AbstractItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent inventoryClickEvent) {
         var itemId = itemStack.getItemMeta().getPersistentDataContainer().get(ShopItem.SHOP_ITEM_ID_KEY, PersistentDataType.INTEGER);
-        var shopItem = menuShop.items().get(itemId);
+        var shopItem = menuShop.shopBuysItems().get(itemId);
+
+
+        // TODO: Implement sell item logic
 
         if (!InventoryUtil.hasSpaceInInventory(player)) {
             messenger.sendMessage(player, NodePath.path("action", "buy", "inventory-full"));
@@ -47,32 +50,31 @@ public class BuyItem extends AbstractItem {
 
         var currentValue = shopItem.currentValue();
 
-        if (!currentValue.hasEnough(player, false)) {
-            messenger.sendMessage(player, NodePath.path("action", "buy", "price-too-high"));
+        if (!InventoryUtil.hasEnoughItems(player, shopItem.itemStack(), shopItem.itemStack().getAmount())) {
+            messenger.sendMessage(player, NodePath.path("action", "sell", "not-enough-items"));
             return;
         }
 
-        currentValue.withdraw(player, false);
+        currentValue.deposit(player, false);
         messenger.sendMessage(
                 player,
-                NodePath.path("action", "buy", "success"),
-                TagResolver.resolver(
-                        Placeholder.parsed("amount", String.valueOf(itemStack.getAmount())),
-                        Placeholder.component("item-name",
-                                itemStack.getItemMeta().hasDisplayName() ?
-                                        itemStack.displayName() :
-                                        (itemStack.getItemMeta().hasItemName() ? itemStack.getItemMeta().itemName() : Component.text(itemStack.getType().name()))
-                        ),
-                        Placeholder.component("price", messenger.component(
+                NodePath.path("action", "sell", "success"),
+                Placeholder.parsed("amount", String.valueOf(itemStack.getAmount())),
+                Placeholder.component("item-name",
+                        shopItem.itemStack().getItemMeta().hasDisplayName() ?
+                                shopItem.itemStack().displayName() :
+                                (shopItem.itemStack().getItemMeta().hasItemName() ? shopItem.itemStack().getItemMeta().itemName() :
+                                        Component.text(shopItem.itemStack().getType().name()))
+                ),
+                Placeholder.component("price", messenger.component(
                         currentValue.formatNode(),
-                        TagResolver.resolver(
-                                Placeholder.parsed("material",
-                                        (currentValue instanceof MaterialValue materialValue) ?
-                                                materialValue.material().name() : ""),
-                                Placeholder.parsed("amount", String.valueOf(currentValue.amount()))
-                        ))))
+                        Placeholder.parsed("material",
+                                (currentValue instanceof MaterialValue materialValue) ?
+                                        materialValue.material().name() : ""),
+                        Placeholder.parsed("amount", String.valueOf(currentValue.amount()))))
         );
 
-        player.getInventory().addItem(shopItem.itemStack());
+        InventoryUtil.removeSpecificItemCount(player, shopItem.itemStack(), shopItem.itemStack().getAmount());
+
     }
 }

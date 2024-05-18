@@ -19,22 +19,33 @@ public class MenuShopTypeSerializer implements TypeSerializer<MenuShop> {
     public MenuShop deserialize(Type type, ConfigurationNode node) throws SerializationException {
         var titleString = node.node("title").getString();
         var title = MiniMessage.miniMessage().deserialize(titleString == null ? "<red>N/A title" : titleString);
-        var structureList = node.node("structure").getList(String.class);
+        var outerStructureList = node.node("structure-outer").getList(String.class);
+        var innerStructureList = node.node("structure-inner").getList(String.class);
 
-        var itemNodes = node.node("items").childrenMap();
+        var sellsItemNodes = node.node("sells-items").childrenMap();
+        var buysItemNodes = node.node("buys-items").childrenMap();
 
-        var items = new HashMap<Integer, ShopItem>();
-        for (Object key : itemNodes.keySet()) {
-            items.put(Integer.parseInt(String.valueOf(key)), itemNodes.get(key).get(ShopItem.class));
+        var sellsItems = new HashMap<Integer, ShopItem>();
+        for (Object key : sellsItemNodes.keySet()) {
+            sellsItems.put(Integer.parseInt(String.valueOf(key)), sellsItemNodes.get(key).get(ShopItem.class));
+        }
+
+        var buysItems = new HashMap<Integer, ShopItem>();
+        for (Object key : buysItemNodes.keySet()) {
+            buysItems.put(Integer.parseInt(String.valueOf(key)), buysItemNodes.get(key).get(ShopItem.class));
         }
 
         return new MenuShop(
                 "",
                 title,
-                items,
-                (structureList == null) || (structureList.isEmpty()) ?
-                        DefaultValues.STANDARD_STRUCTURE :
-                        structureList.toArray(String[]::new)
+                sellsItems,
+                buysItems,
+                (outerStructureList == null) || (outerStructureList.isEmpty()) ?
+                        DefaultValues.STANDARD_STRUCTURE_OUTER :
+                        outerStructureList.toArray(String[]::new),
+                (innerStructureList == null) || (innerStructureList.isEmpty()) ?
+                        DefaultValues.STANDARD_STRUCTURE_INNER :
+                        innerStructureList.toArray(String[]::new)
         );
     }
 
@@ -42,9 +53,14 @@ public class MenuShopTypeSerializer implements TypeSerializer<MenuShop> {
     public void serialize(Type type, @Nullable MenuShop menuShop, ConfigurationNode node) throws SerializationException {
         if (menuShop != null) {
             node.node("title").set(MiniMessage.miniMessage().serialize(menuShop.title()));
-            node.node("structure").set(Arrays.asList(menuShop.structure()));
-            for (Integer key : menuShop.items().keySet()) {
-                node.node("items").node(String.valueOf(key)).set(ShopItem.class, menuShop.items().get(key));
+            node.node("structure-outer").set(Arrays.asList(menuShop.outerStructure()));
+            node.node("structure-inner").set(Arrays.asList(menuShop.innerStructure()));
+            for (Integer key : menuShop.shopSellsItems().keySet()) {
+                node.node("sells-items").node(String.valueOf(key)).set(ShopItem.class, menuShop.shopSellsItems().get(key));
+            }
+
+            for (Integer key : menuShop.shopBuysItems().keySet()) {
+                node.node("buys-items").node(String.valueOf(key)).set(ShopItem.class, menuShop.shopBuysItems().get(key));
             }
         }
     }

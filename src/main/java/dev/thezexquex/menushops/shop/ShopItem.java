@@ -1,7 +1,8 @@
 package dev.thezexquex.menushops.shop;
 
 import dev.thezexquex.menushops.message.Messenger;
-import dev.thezexquex.menushops.shop.gui.item.BuyItem;
+import dev.thezexquex.menushops.shop.gui.item.BuysItem;
+import dev.thezexquex.menushops.shop.gui.item.SellsItem;
 import dev.thezexquex.menushops.shop.value.Value;
 import dev.thezexquex.menushops.shop.value.values.MaterialValue;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -11,9 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.spongepowered.configurate.NodePath;
 import xyz.xenondevs.invui.item.Item;
-import xyz.xenondevs.invui.item.impl.SimpleItem;
-
-import java.util.List;
 
 public class ShopItem {
     public static final NamespacedKey SHOP_ITEM_ID_KEY = new NamespacedKey("menushops", "shop_item_id");
@@ -58,7 +56,7 @@ public class ShopItem {
         return itemStack.clone();
     }
 
-    public Item toGuiItem(Messenger messenger, int id, MenuShop menuShop) {
+    public Item toSellsItem(Messenger messenger, int id, MenuShop menuShop) {
         var modifiedItemStack = itemStack.clone();
 
         var itemMeta = modifiedItemStack.getItemMeta();
@@ -67,7 +65,7 @@ public class ShopItem {
         modifiedItemStack.setItemMeta(itemMeta);
 
         var lore = messenger.componentList(
-                NodePath.path("gui", "item", "buy", "lore"),
+                NodePath.path("gui", "item", "shop-sells", "lore"),
                 TagResolver.resolver(
                         Placeholder.component("price", messenger.component(
                                         currentValue.formatNode(),
@@ -91,6 +89,42 @@ public class ShopItem {
             modifiedItemStack.lore(oldLore);
         }
 
-        return new BuyItem(modifiedItemStack, menuShop, messenger);
+        return new SellsItem(modifiedItemStack, menuShop, messenger);
+    }
+
+    public Item toBuysItem(Messenger messenger, int id, MenuShop menuShop) {
+        var modifiedItemStack = itemStack.clone();
+
+        var itemMeta = modifiedItemStack.getItemMeta();
+        itemMeta.getPersistentDataContainer().set(SHOP_ITEM_ID_KEY, PersistentDataType.INTEGER, id);
+
+        modifiedItemStack.setItemMeta(itemMeta);
+
+        var lore = messenger.componentList(
+                NodePath.path("gui", "item", "shop-buys", "lore"),
+                TagResolver.resolver(
+                        Placeholder.component("price", messenger.component(
+                                        currentValue.formatNode(),
+                                        TagResolver.resolver(
+                                                Placeholder.parsed("material",
+                                                        (currentValue instanceof MaterialValue materialValue) ?
+                                                                materialValue.material().name() : ""),
+                                                Placeholder.parsed("amount", String.valueOf(currentValue.amount()))
+                                        )
+                                )
+                        )
+                )
+        );
+
+        var oldLore = modifiedItemStack.lore();
+
+        if (oldLore == null) {
+            modifiedItemStack.lore(lore);
+        } else {
+            oldLore.addAll(lore);
+            modifiedItemStack.lore(oldLore);
+        }
+
+        return new BuysItem(modifiedItemStack, menuShop, messenger);
     }
 }

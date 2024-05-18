@@ -18,12 +18,17 @@ import org.spongepowered.configurate.NodePath;
 import java.util.concurrent.CompletableFuture;
 
 import static dev.thezexquex.menushops.command.ValueArgumentParser.valueParser;
+import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
 import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 import static org.incendo.cloud.parser.standard.StringParser.*;
 
 public class MenuShopCommand extends BaseCommand {
     public MenuShopCommand(MenuShopsPlugin plugin) {
         super(plugin);
+    }
+
+    private enum EditType {
+        BUY, SELL
     }
 
     @Override
@@ -58,9 +63,10 @@ public class MenuShopCommand extends BaseCommand {
                 .senderType(Player.class)
                 .permission("menushops.command.menushops.edit.additem")
                 .literal("edit")
-                .literal("additem")
                 .required("shop-name", stringParser(), (context, input) ->
                         CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::suggestion).toList()))
+                .literal("additem")
+                .required("type", enumParser(EditType.class))
                 .required("lower-bound", quotedStringParser())
                 .required("upper-bound", quotedStringParser())
                 .handler(this::handleEditAddItem)
@@ -70,9 +76,10 @@ public class MenuShopCommand extends BaseCommand {
                 .senderType(Player.class)
                 .literal("edit")
                 .permission("menushops.command.menushops.edit.removeitem")
-                .literal("removeitem")
                 .required("shop-name", stringParser(), (context, input) ->
                         CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::suggestion).toList()))
+                .literal("removeitem")
+                .required("type", enumParser(EditType.class))
                 .required("id", integerParser())
                 .handler(this::handleEditRemoveItem)
 
@@ -136,6 +143,7 @@ public class MenuShopCommand extends BaseCommand {
         var lowerBoundPattern = (String) playerCommandContext.get("lower-bound");
         var upperBoundPattern = (String) playerCommandContext.get("upper-bound");
 
+        var editType = (EditType) playerCommandContext.get("type");
 
         var shopOpt = plugin.shopService().getShop(shopName);
         if (shopOpt.isEmpty()) {
@@ -164,7 +172,7 @@ public class MenuShopCommand extends BaseCommand {
         var upperBoundValue = ValueParser.fromPattern(upperBoundPattern);
 
         if (lowerBoundValue.amount() > upperBoundValue.amount()) {
-            plugin.messenger().sendMessage(sender, NodePath.path("exception", "parser", "lower-higher-than-upper"));
+            plugin.messenger().sendMessage(sender, NodePath.path("exception", "value-parser", "lower-higher-than-upper"));
             return;
         }
 
@@ -174,7 +182,12 @@ public class MenuShopCommand extends BaseCommand {
             return;
         }
 
-        shop.addItem(new ShopItem(itemStack, lowerBoundValue, upperBoundValue));
+        if (editType == EditType.SELL) {
+            shop.addSellsItem(new ShopItem(itemStack, lowerBoundValue, upperBoundValue));
+        } else {
+            shop.addBuysItem(new ShopItem(itemStack, lowerBoundValue, upperBoundValue));
+        }
+
         if (!plugin.shopService().saveShop(shop)) {
             plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "error"));
             return;
@@ -187,6 +200,8 @@ public class MenuShopCommand extends BaseCommand {
         var sender = playerCommandContext.sender();
         var itemId = (int) playerCommandContext.get("id");
 
+        var editType = (EditType) playerCommandContext.get("type");
+
         var shopOpt = plugin.shopService().getShop(shopName);
         if (shopOpt.isEmpty()) {
             plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "not-found"));
@@ -195,14 +210,26 @@ public class MenuShopCommand extends BaseCommand {
 
         var shop = shopOpt.get();
 
-        if (itemId > shop.items().size() - 1) {
-            plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "remove", "no-such-item"));
-            return;
+        if (editType == EditType.SELL) {
+            if (itemId > shop.shopSellsItems().size() - 1) {
+                plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "remove", "no-such-item"));
+                return;
+            }
+            if (!shop.removeSellsItem(itemId)) {
+                plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "remove", "no-such-item"));
+                return;
+            }
+        } else {
+            if (itemId > shop.shopBuysItems().size() - 1) {
+                plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "remove", "no-such-item"));
+                return;
+            }
+            if (!shop.removeBuysItem(itemId)) {
+                plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "remove", "no-such-item"));
+                return;
+            }
         }
-        if (!shop.removeItem(itemId)) {
-            plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "remove", "no-such-item"));
-            return;
-        }
+
         if (!plugin.shopService().saveShop(shop)) {
             plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "edit", "error"));
             return;

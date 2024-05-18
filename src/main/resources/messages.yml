@@ -11,18 +11,32 @@ command:
     delete:
       success: "<prefix><green>Der Shop <yellow><shop> <green>wurde gelöscht"
     edit:
-      additem:
+      add:
+        item-null: "<prefix><red>Du kannst Luft nicht in den Shop hinzufügen!"
         success: "<prefix><green>Du hast das Item erfolgreich hinzugefügt"
-      removeitem:
+      remove:
+        no-such-item: "<prefix><red>Ein Item mit dieser ID existiert nicht!"
         success: "<prefix><green>Du hast das Item erfolgreich entfernt"
 
 gui:
+  title:
+    # The title for the shop gui that sells items
+    shop-sells: "<shop-title> <gray>- <red>Kaufen"
+    # The title for the shop gui that buys items
+    shop-buys: "<shop-title> <gray>- <red>Verkaufen"
   item:
-    buy:
+    # The lore for an item the user can buy
+    shop-sells:
       lore:
         - ""
         - "<!i><gray>Preis: <price>"
-        - "<!i><gray>Linksklick: kaufen"
+        - "<!i><gray>Linksklick: <gold>Kaufen"
+    # The lore for an item the user can sell
+    shop-buys:
+      lore:
+        - ""
+        - "<!i><gray>Wert: <price>"
+        - "<!i><gray>Linksklick: <gold>Verkaufen"
   value-format:
     material: "<gold><amount> <gray>x <gold><material>"
     vault-money: "<gold><amount> <gray>x <gold><material>"
@@ -35,8 +49,14 @@ action:
     success: "<prefix><green>Du hast <gold><amount> <gray>x <yellow><item-name> <green>für <price> <green>gekauft!"
     inventory-full: "<prefix><red>Dein Inventar ist voll"
     price-too-high: "<prefix><red>Du kannst dir dieses Item nicht leisten"
+  sell:
+    success: "<prefix><green>Du hast <gold><amount> <gray>x <yellow><item-name> <green>für <price> <green>verkauft!"
+    inventory-full: "<prefix><red>Dein Inventar ist voll"
+    not-enough-items: "<prefix><red>Du hast zu wenig Items zum Verkaufen"
 
 exception:
+  value-parser:
+    lower-higher-than-upper: "<prefix><red>Die Anzahl des unteren Limits darf nicht größer sein als die des oberen Limits!"
   invalid-syntax: "<red>Bitte benutze <yellow><valid-syntax>"
   invalid-sender: "<red>Dieser Command darf nur von <yellow><valid-sender> <red>ausgeführt werden"
   invalid-argument: "<red>Invalides Argument: <yellow><cause>"
