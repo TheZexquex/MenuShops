@@ -40,6 +40,25 @@ public class Messenger {
         return prefixString == null ? Component.text("N/A prefix") : miniMessage.deserialize(prefixString);
     }
 
+    public List<Component> componentList(NodePath path, TagResolver... resolvers) {
+        List<String> messageStringList;
+        try {
+            messageStringList = rootNode.node(path).getList(String.class);
+        } catch (SerializationException e) {
+            return List.of(Component.text("N/A " + path));
+        }
+
+        if (messageStringList == null) {
+            return List.of(Component.text("N/A " + path));
+        }
+
+        if (messageStringList.isEmpty()) {
+            return List.of(Component.text("N/A " + path));
+        }
+
+        return messageStringList.stream().map(string -> miniMessage.deserialize(string, resolvers)).toList();
+    }
+
     public Component componentFromList(NodePath path, TagResolver... resolvers) {
         List<String> messageStringList;
         try {

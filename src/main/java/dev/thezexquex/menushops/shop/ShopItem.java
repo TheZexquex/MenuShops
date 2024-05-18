@@ -66,18 +66,16 @@ public class ShopItem {
 
         modifiedItemStack.setItemMeta(itemMeta);
 
-        var lore = List.of(
-                messenger.componentFromList(
-                        NodePath.path("gui", "item", "buy", "lore"),
-                        TagResolver.resolver(
-                                Placeholder.component("price", messenger.component(
-                                                currentValue.formatNode(),
-                                                TagResolver.resolver(
-                                                        Placeholder.parsed("material",
-                                                                (currentValue instanceof MaterialValue materialValue) ?
-                                                                        materialValue.material().name() : ""),
-                                                        Placeholder.parsed("amount", String.valueOf(currentValue.amount()))
-                                                )
+        var lore = messenger.componentList(
+                NodePath.path("gui", "item", "buy", "lore"),
+                TagResolver.resolver(
+                        Placeholder.component("price", messenger.component(
+                                        currentValue.formatNode(),
+                                        TagResolver.resolver(
+                                                Placeholder.parsed("material",
+                                                        (currentValue instanceof MaterialValue materialValue) ?
+                                                                materialValue.material().name() : ""),
+                                                Placeholder.parsed("amount", String.valueOf(currentValue.amount()))
                                         )
                                 )
                         )
