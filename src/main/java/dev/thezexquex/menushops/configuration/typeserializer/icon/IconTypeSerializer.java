@@ -26,13 +26,20 @@ public class IconTypeSerializer implements TypeSerializer<ItemStack> {
             itemStack.lore(lore);
         }
 
+        var itemMeta = itemStack.getItemMeta();
+
         var displayName = node.node("display-name").getString();
         if (displayName != null) {
-            var itemMeta = itemStack.getItemMeta();
             itemMeta.displayName(MiniMessage.miniMessage().deserialize(displayName));
-
-            itemStack.setItemMeta(itemMeta);
         }
+
+        if (node.hasChild("custom-model-data")) {
+            var customModelData = node.node("custom-model-data").getInt();
+
+            itemMeta.setCustomModelData(customModelData);
+        }
+
+        itemStack.setItemMeta(itemMeta);
 
         return itemStack;
     }
