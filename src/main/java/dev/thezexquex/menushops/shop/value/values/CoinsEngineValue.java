@@ -16,7 +16,7 @@ public class CoinsEngineValue extends Value {
     }
 
     @Override
-    public void withdraw(Player player, boolean stack) {
+    public void withdraw(Player player, MenuShopsPlugin plugin) {
         var curr = CoinsEngineAPI.getCurrency(currency);
         if (curr != null) {
             CoinsEngineAPI.removeBalance(player, curr, amount);
@@ -24,7 +24,7 @@ public class CoinsEngineValue extends Value {
     }
 
     @Override
-    public void deposit(Player player, boolean stack) {
+    public void deposit(Player player, MenuShopsPlugin plugin) {
         var curr = CoinsEngineAPI.getCurrency(currency);
         if (curr != null) {
             CoinsEngineAPI.addBalance(player, curr, amount);
@@ -32,7 +32,7 @@ public class CoinsEngineValue extends Value {
     }
 
     @Override
-    public boolean hasEnough(Player player, boolean stack) {
+    public boolean hasEnough(Player player, MenuShopsPlugin plugin) {
         var curr = CoinsEngineAPI.getCurrency(currency);
         if (curr == null) {
             return false;

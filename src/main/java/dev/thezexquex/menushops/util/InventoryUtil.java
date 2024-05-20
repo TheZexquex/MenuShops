@@ -41,7 +41,7 @@ public class InventoryUtil {
         }
     }
 
-    public static boolean hasSpaceInInventory(Player player) {
-        return Arrays.stream(player.getInventory().getStorageContents()).anyMatch(Objects::isNull);
+    public static boolean hasNoSpaceInInventory(Player player) {
+        return Arrays.stream(player.getInventory().getStorageContents()).noneMatch(Objects::isNull);
     }
 }

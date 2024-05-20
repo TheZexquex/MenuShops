@@ -11,9 +11,9 @@ public abstract class Value {
         this.amount = amount;
     }
 
-    public abstract void withdraw(Player player, boolean stack);
-    public abstract void deposit(Player player, boolean stack);
-    public abstract boolean hasEnough(Player player, boolean stack);
+    public abstract void withdraw(Player player, MenuShopsPlugin plugin);
+    public abstract void deposit(Player player, MenuShopsPlugin plugin);
+    public abstract boolean hasEnough(Player player, MenuShopsPlugin plugin);
     public abstract boolean isAvailable(MenuShopsPlugin plugin);
     public abstract NodePath formatNode();
     public int amount() {

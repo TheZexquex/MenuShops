@@ -17,17 +17,17 @@ public class MaterialValue extends Value {
     }
 
     @Override
-    public void withdraw(Player player, boolean stack) {
+    public void withdraw(Player player, MenuShopsPlugin plugin) {
         InventoryUtil.removeSpecificItemCount(player, new ItemStack(material), amount);
     }
 
     @Override
-    public void deposit(Player player, boolean stack) {
+    public void deposit(Player player, MenuShopsPlugin plugin) {
         player.getInventory().addItem(new ItemStack(material, amount));
     }
 
     @Override
-    public boolean hasEnough(Player player, boolean stack) {
+    public boolean hasEnough(Player player, MenuShopsPlugin plugin) {
         return InventoryUtil.hasEnoughItems(player, new ItemStack(material), amount);
     }
 

@@ -5,11 +5,15 @@ import dev.thezexquex.menushops.command.MenuShopCommand;
 import dev.thezexquex.menushops.configuration.ConfigurationLoader;
 import dev.thezexquex.menushops.configuration.typeserializer.icon.IconTypeSerializer;
 import dev.thezexquex.menushops.data.ShopService;
+import dev.thezexquex.menushops.hooks.Hook;
 import dev.thezexquex.menushops.hooks.PluginHookService;
 import dev.thezexquex.menushops.hooks.externalhooks.CoinsEngineHook;
 import dev.thezexquex.menushops.hooks.externalhooks.PlaceholderApiHook;
+import dev.thezexquex.menushops.hooks.externalhooks.VaultHook;
 import dev.thezexquex.menushops.message.Messenger;
 import dev.thezexquex.menushops.shop.ShopItem;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.block.Vault;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,6 +40,7 @@ public class MenuShopsPlugin extends JavaPlugin {
     private PluginHookService pluginHookService;
     private ConfigurationLoader configurationLoader;
     private Messenger messenger;
+    private Economy vaultEconomy;
     private final HashMap<Character, ItemStack> icons = new HashMap<>();
 
     @Override
@@ -51,6 +56,7 @@ public class MenuShopsPlugin extends JavaPlugin {
         this.pluginHookService = new PluginHookService(getServer());
         this.pluginHookService.register(this, new PlaceholderApiHook());
         this.pluginHookService.register(this, new CoinsEngineHook());
+        this.pluginHookService.register(this, new VaultHook());
 
         var shopConfigsFolder = getDataFolder().toPath().resolve("shops");
 
@@ -197,5 +203,13 @@ public class MenuShopsPlugin extends JavaPlugin {
 
     public HashMap<Character, ItemStack> icons() {
         return icons;
+    }
+
+    public Economy vaultEconomy() {
+        return vaultEconomy;
+    }
+
+    public void vaultEconomy(Economy vaultEconomy) {
+        this.vaultEconomy = vaultEconomy;
     }
 }

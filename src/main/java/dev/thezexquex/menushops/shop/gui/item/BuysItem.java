@@ -9,7 +9,6 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -50,7 +49,7 @@ public class BuysItem extends AbstractItem {
             return;
         }
 
-        if (!InventoryUtil.hasSpaceInInventory(player)) {
+        if (currentValue instanceof MaterialValue && InventoryUtil.hasNoSpaceInInventory(player)) {
             messenger.sendMessage(player, NodePath.path("action", "sell", "inventory-full"));
             return;
         }
@@ -60,7 +59,7 @@ public class BuysItem extends AbstractItem {
             return;
         }
 
-        currentValue.deposit(player, false);
+        currentValue.deposit(player, messenger.plugin());
         messenger.sendMessage(
                 player,
                 NodePath.path("action", "sell", "success"),

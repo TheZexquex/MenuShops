@@ -36,7 +36,8 @@ dependencies {
     implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.7")
     implementation("xyz.xenondevs.invui", "invui", "1.30")
 
-    compileOnly("su.nightexpress.coinsengine:CoinsEngine:2.3.3")
+    compileOnly("com.github.MilkBowl", "VaultAPI", "1.7")
+    compileOnly("su.nightexpress.coinsengine", "CoinsEngine", "2.3.3")
     compileOnly("io.papermc.paper", "paper-api", "1.20.6-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl", "VaultAPI", "1.7")
     compileOnly("me.clip", "placeholderapi", "2.11.5")
@@ -80,6 +81,7 @@ tasks {
 
         downloadPlugins {
             url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
+            url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
             url("https://cdn.thezexquex.dev/s/3s4T45pnTiYg4fe/download")
             url("https://cdn.thezexquex.dev/s/jMzSo2LGSyZCXoB/download")
             //hangar("PlaceholderAPI", "2.11.5")

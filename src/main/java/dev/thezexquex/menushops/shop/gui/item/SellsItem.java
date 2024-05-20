@@ -49,17 +49,17 @@ public class SellsItem extends AbstractItem {
             return;
         }
 
-        if (!InventoryUtil.hasSpaceInInventory(player)) {
+        if (InventoryUtil.hasNoSpaceInInventory(player)) {
             messenger.sendMessage(player, NodePath.path("action", "buy", "inventory-full"));
             return;
         }
 
-        if (!currentValue.hasEnough(player, false)) {
+        if (!currentValue.hasEnough(player, messenger.plugin())) {
             messenger.sendMessage(player, NodePath.path("action", "buy", "price-too-high"));
             return;
         }
 
-        currentValue.withdraw(player, false);
+        currentValue.withdraw(player, messenger.plugin());
         messenger.sendMessage(
                 player,
                 NodePath.path("action", "buy", "success"),

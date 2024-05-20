@@ -2,11 +2,13 @@ package dev.thezexquex.menushops.shop.value;
 
 import dev.thezexquex.menushops.hooks.PluginHookService;
 import dev.thezexquex.menushops.hooks.externalhooks.CoinsEngineHook;
+import dev.thezexquex.menushops.hooks.externalhooks.VaultHook;
 import dev.thezexquex.menushops.shop.value.values.CoinsEngineValue;
 import dev.thezexquex.menushops.shop.value.values.MaterialValue;
 import dev.thezexquex.menushops.shop.value.values.VaultValue;
 import dev.thezexquex.menushops.util.KeyValue;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 import su.nightexpress.coinsengine.api.CoinsEngineAPI;
 
 import java.util.Arrays;
@@ -82,7 +84,11 @@ public class ValueParser {
                 }
             }
             case "vault" -> {
-                return new ValueParserResult(ValueParserResultType.INVALID_VALUE_TYPE, 0, type.length());
+                if (!pluginHookService.isAvailable(VaultHook.class)) {
+                    return new ValueParserResult(ValueParserResultType.HOOK_NOT_AVAILABLE, 0, type.length());
+                }
+
+                return verifyAmount(valuePattern);
             }
             case "coinsengine" -> {
                 if (!pluginHookService.isAvailable(CoinsEngineHook.class)) {
@@ -97,37 +103,42 @@ public class ValueParser {
                     return new ValueParserResult(ValueParserResultType.INVALID_CURRENCY, valuePattern.indexOf(potentialCurrency), potentialCurrency.length());
                 }
 
-                var possibleAmount = valuePattern.split(":")[1];
-
-                int errorPositionEnd = valuePattern.indexOf(possibleAmount) + possibleAmount.length();
-
-                try{
-                    var amount = Integer.parseInt(possibleAmount);
-                    if (!(amount >= 0)) {
-                        return new ValueParserResult(
-                                ValueParserResultType.INVALID_AMOUNT_SIZE,
-                                valuePattern.indexOf(possibleAmount),
-                                errorPositionEnd
-                        );
-                    }
-
-                    return new ValueParserResult(
-                            ValueParserResultType.VALID,
-                            0,
-                            0
-                    );
-
-                } catch (NumberFormatException e) {
-                    return new ValueParserResult(
-                            ValueParserResultType.AMOUNT_NO_NUMBER,
-                            valuePattern.indexOf(possibleAmount),
-                            errorPositionEnd
-                    );
-                }
+                return verifyAmount(valuePattern);
             }
             default -> {
                 return new ValueParserResult(ValueParserResultType.INVALID_VALUE_TYPE, 0, type.length());
             }
+        }
+    }
+
+    @NotNull
+    private static ValueParser.ValueParserResult verifyAmount(String valuePattern) {
+        var possibleAmount = valuePattern.split(":")[1];
+
+        int errorPositionEnd = valuePattern.indexOf(possibleAmount) + possibleAmount.length();
+
+        try{
+            var amount = Integer.parseInt(possibleAmount);
+            if (!(amount >= 0)) {
+                return new ValueParserResult(
+                        ValueParserResultType.INVALID_AMOUNT_SIZE,
+                        valuePattern.indexOf(possibleAmount),
+                        errorPositionEnd
+                );
+            }
+
+            return new ValueParserResult(
+                    ValueParserResultType.VALID,
+                    0,
+                    0
+            );
+
+        } catch (NumberFormatException e) {
+            return new ValueParserResult(
+                    ValueParserResultType.AMOUNT_NO_NUMBER,
+                    valuePattern.indexOf(possibleAmount),
+                    errorPositionEnd
+            );
         }
     }
 
