@@ -1,8 +1,8 @@
-package dev.thezexquex.menushops.data.shop;
+package dev.thezexquex.menushops.data;
 
-import dev.thezexquex.menushops.data.shop.typeserializer.MenuShopTypeSerializer;
-import dev.thezexquex.menushops.data.shop.typeserializer.ShopItemTypeSerializer;
-import dev.thezexquex.menushops.data.shop.typeserializer.ValueTypeSerializer;
+import dev.thezexquex.menushops.configuration.typeserializer.shop.MenuShopTypeSerializer;
+import dev.thezexquex.menushops.configuration.typeserializer.shop.ShopItemTypeSerializer;
+import dev.thezexquex.menushops.configuration.typeserializer.shop.ValueTypeSerializer;
 import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.value.Value;

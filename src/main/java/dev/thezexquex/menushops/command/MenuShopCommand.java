@@ -10,14 +10,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.context.CommandContext;
-import org.incendo.cloud.parser.ParserDescriptor;
-import org.incendo.cloud.parser.standard.StringParser;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.spongepowered.configurate.NodePath;
 
 import java.util.concurrent.CompletableFuture;
 
-import static dev.thezexquex.menushops.command.ValueArgumentParser.valueParser;
 import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
 import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 import static org.incendo.cloud.parser.standard.StringParser.*;
@@ -113,7 +110,7 @@ public class MenuShopCommand extends BaseCommand {
 
         var shop = shopOpt.get();
 
-        MenuShopGui.constructGui(player, shop, plugin.messenger()).open();
+        MenuShopGui.constructGui(player, shop, plugin.messenger(), plugin.icons()).open();
     }
 
     private void handleCreate(CommandContext<Player> playerCommandContext) {
@@ -153,8 +150,8 @@ public class MenuShopCommand extends BaseCommand {
 
         var shop = shopOpt.get();
 
-        var lowerBoundValueParserResult = ValueParser.validate(lowerBoundPattern);
-        var upperBoundValueParserResult = ValueParser.validate(upperBoundPattern);
+        var lowerBoundValueParserResult = ValueParser.validate(lowerBoundPattern, plugin.pluginHookService());
+        var upperBoundValueParserResult = ValueParser.validate(upperBoundPattern, plugin.pluginHookService());
 
         if (lowerBoundValueParserResult.valueParserResultType() != ValueParser.ValueParserResultType.VALID) {
             sender.sendRichMessage("<red>Error while parsing lower-bound-value: " + lowerBoundValueParserResult.valueParserResultType());

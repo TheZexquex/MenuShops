@@ -1,5 +1,6 @@
 package dev.thezexquex.menushops.command;
 
+import dev.thezexquex.menushops.hooks.PluginHookService;
 import dev.thezexquex.menushops.shop.value.Value;
 import dev.thezexquex.menushops.shop.value.ValueParser;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,12 @@ import org.incendo.cloud.parser.ArgumentParser;
 import org.incendo.cloud.parser.ParserDescriptor;
 
 public class ValueArgumentParser<C> implements ArgumentParser<C, Value> {
+    private final PluginHookService pluginHookService;
+
+    public ValueArgumentParser(PluginHookService pluginHookService) {
+        this.pluginHookService = pluginHookService;
+    }
+
     @Override
     public @NonNull ArgumentParseResult<@NonNull Value> parse(
             @NonNull CommandContext<@NonNull C> commandContext,
@@ -21,7 +28,7 @@ public class ValueArgumentParser<C> implements ArgumentParser<C, Value> {
     ) {
         var input = commandInput.peekString();
 
-        var result = ValueParser.validate(input);
+        var result = ValueParser.validate(input, pluginHookService);
 
         if (result.valueParserResultType() == ValueParser.ValueParserResultType.VALID) {
             commandInput.readString();
@@ -67,7 +74,7 @@ public class ValueArgumentParser<C> implements ArgumentParser<C, Value> {
         }
     }
 
-    public static ParserDescriptor<CommandSender, Value> valueParser() {
-        return ParserDescriptor.of(new ValueArgumentParser<>(), Value.class);
+    public static ParserDescriptor<CommandSender, Value> valueParser(PluginHookService pluginHookService) {
+        return ParserDescriptor.of(new ValueArgumentParser<>(pluginHookService), Value.class);
     }
 }

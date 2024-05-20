@@ -1,4 +1,4 @@
-package dev.thezexquex.menushops.data.shop.typeserializer;
+package dev.thezexquex.menushops.configuration.typeserializer.shop;
 
 import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.ShopItem;

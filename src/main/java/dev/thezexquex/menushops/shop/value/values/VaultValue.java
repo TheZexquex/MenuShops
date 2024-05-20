@@ -1,5 +1,6 @@
 package dev.thezexquex.menushops.shop.value.values;
 
+import dev.thezexquex.menushops.MenuShopsPlugin;
 import dev.thezexquex.menushops.shop.value.Value;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.NodePath;
@@ -22,6 +23,11 @@ public class VaultValue extends Value {
 
     @Override
     public boolean hasEnough(Player player, boolean stack) {
+        return false;
+    }
+
+    @Override
+    public boolean isAvailable(MenuShopsPlugin plugin) {
         return false;
     }
 

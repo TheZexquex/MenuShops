@@ -5,6 +5,8 @@ import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.value.values.MaterialValue;
 import dev.thezexquex.menushops.util.InventoryUtil;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -40,12 +42,17 @@ public class SellsItem extends AbstractItem {
         var itemId = itemStack.getItemMeta().getPersistentDataContainer().get(ShopItem.SHOP_ITEM_ID_KEY, PersistentDataType.INTEGER);
         var shopItem = menuShop.shopSellsItems().get(itemId);
 
+        var currentValue = shopItem.currentValue();
+
+        if (!currentValue.isAvailable(messenger.plugin())) {
+            messenger.sendMessage(player, NodePath.path("action", "buy", "currency-unavailable"));
+            return;
+        }
+
         if (!InventoryUtil.hasSpaceInInventory(player)) {
             messenger.sendMessage(player, NodePath.path("action", "buy", "inventory-full"));
             return;
         }
-
-        var currentValue = shopItem.currentValue();
 
         if (!currentValue.hasEnough(player, false)) {
             messenger.sendMessage(player, NodePath.path("action", "buy", "price-too-high"));
@@ -74,5 +81,7 @@ public class SellsItem extends AbstractItem {
         );
 
         player.getInventory().addItem(shopItem.itemStack());
+
+        player.playSound(Sound.sound(Key.key("entity.experience_orb.pickup"), Sound.Source.MASTER, 1, 1));
     }
 }

@@ -1,0 +1,24 @@
+<'#':
+  material: ORANGE_STAINED_GLASS_PANE
+  display-name: ""
+  lore:
+    - ""
+  amount: 1
+'S':
+  display-name: "<!i><gradient:#fc9403:#fce803>Items Kaufen</gradient>"
+  material: IRON_INGOT
+  amount: 1
+'B':
+  display-name: "<!i><gradient:#fc9403:#fce803>Items Verkaufen</gradient>"
+  material: GOLD_INGOT
+  amount: 1
+'<':
+  material: PAINTING
+  amount: 1
+'>':
+  material: PAINTING
+  amount: 1
+'R':
+  display-name: "<!i><gray>Noch kein Item verfügbar"
+  material: HOPPER
+  amount: 1

@@ -5,6 +5,8 @@ import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.value.values.MaterialValue;
 import dev.thezexquex.menushops.util.InventoryUtil;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -41,14 +43,17 @@ public class BuysItem extends AbstractItem {
         var shopItem = menuShop.shopBuysItems().get(itemId);
 
 
-        // TODO: Implement sell item logic
+        var currentValue = shopItem.currentValue();
 
-        if (!InventoryUtil.hasSpaceInInventory(player)) {
-            messenger.sendMessage(player, NodePath.path("action", "buy", "inventory-full"));
+        if (!currentValue.isAvailable(messenger.plugin())) {
+            messenger.sendMessage(player, NodePath.path("action", "sell", "currency-unavailable"));
             return;
         }
 
-        var currentValue = shopItem.currentValue();
+        if (!InventoryUtil.hasSpaceInInventory(player)) {
+            messenger.sendMessage(player, NodePath.path("action", "sell", "inventory-full"));
+            return;
+        }
 
         if (!InventoryUtil.hasEnoughItems(player, shopItem.itemStack(), shopItem.itemStack().getAmount())) {
             messenger.sendMessage(player, NodePath.path("action", "sell", "not-enough-items"));
@@ -76,5 +81,6 @@ public class BuysItem extends AbstractItem {
 
         InventoryUtil.removeSpecificItemCount(player, shopItem.itemStack(), shopItem.itemStack().getAmount());
 
+        player.playSound(Sound.sound(Key.key("entity.experience_orb.pickup"), Sound.Source.MASTER, 1, 1));
     }
 }

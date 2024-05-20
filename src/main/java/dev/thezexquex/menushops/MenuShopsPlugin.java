@@ -3,19 +3,23 @@ package dev.thezexquex.menushops;
 import dev.thezexquex.menushops.command.AdditionalCaptionKeys;
 import dev.thezexquex.menushops.command.MenuShopCommand;
 import dev.thezexquex.menushops.configuration.ConfigurationLoader;
-import dev.thezexquex.menushops.data.shop.ShopService;
+import dev.thezexquex.menushops.configuration.typeserializer.icon.IconTypeSerializer;
+import dev.thezexquex.menushops.data.ShopService;
 import dev.thezexquex.menushops.hooks.PluginHookService;
+import dev.thezexquex.menushops.hooks.externalhooks.CoinsEngineHook;
 import dev.thezexquex.menushops.hooks.externalhooks.PlaceholderApiHook;
 import dev.thezexquex.menushops.message.Messenger;
+import dev.thezexquex.menushops.shop.ShopItem;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.incendo.cloud.SenderMapper;
-import org.incendo.cloud.brigadier.BrigadierSetting;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.caption.StandardCaptionKeys;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
+import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.NodePath;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -23,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.logging.Level;
 
 public class MenuShopsPlugin extends JavaPlugin {
@@ -31,6 +36,7 @@ public class MenuShopsPlugin extends JavaPlugin {
     private PluginHookService pluginHookService;
     private ConfigurationLoader configurationLoader;
     private Messenger messenger;
+    private final HashMap<Character, ItemStack> icons = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -44,6 +50,7 @@ public class MenuShopsPlugin extends JavaPlugin {
     public void reload() {
         this.pluginHookService = new PluginHookService(getServer());
         this.pluginHookService.register(this, new PlaceholderApiHook());
+        this.pluginHookService.register(this, new CoinsEngineHook());
 
         var shopConfigsFolder = getDataFolder().toPath().resolve("shops");
 
@@ -51,6 +58,7 @@ public class MenuShopsPlugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
         loadConfiguration();
 
         this.shopService = new ShopService(shopConfigsFolder, getLogger());
@@ -125,6 +133,7 @@ public class MenuShopsPlugin extends JavaPlugin {
 
     private boolean setUpFoldersAndFiles(Path shopConfigsFolder) {
         saveResourceFile(Path.of("messages.yml"));
+        saveResourceFile(Path.of("icons.yml"));
 
         try {
             Files.createDirectory(shopConfigsFolder);
@@ -148,11 +157,29 @@ public class MenuShopsPlugin extends JavaPlugin {
     private void loadConfiguration() {
         this.configurationLoader = new ConfigurationLoader(this);
 
-        var messageConfigurationBuilder = YamlConfigurationLoader.builder()
+        var messageConfigurationLoader = YamlConfigurationLoader.builder()
                 .path(getDataFolder().toPath().resolve("messages.yml"))
                 .build();
 
-        var messageNodeOpt = configurationLoader.loadConfiguration(messageConfigurationBuilder);
+        var iconsConfigurationLoader = YamlConfigurationLoader.builder()
+                .defaultOptions(build -> build.serializers(builder -> builder.register(ItemStack.class, new IconTypeSerializer())))
+                .path(getDataFolder().toPath().resolve("icons.yml"))
+                .build();
+
+        try {
+            var iconsRootNode = iconsConfigurationLoader.load();
+
+            var iconNodes =  iconsRootNode.childrenMap();
+
+            for (Object key : iconNodes.keySet()) {
+                icons.put(String.valueOf(key).charAt(0), iconNodes.get(key).get(ItemStack.class));
+            }
+
+        } catch (ConfigurateException e) {
+            getLogger().log(Level.WARNING, "Failed to load icons configuration", e);
+        }
+
+        var messageNodeOpt = configurationLoader.loadConfiguration(messageConfigurationLoader);
         messageNodeOpt.ifPresent(configurationNode -> this.messenger = new Messenger(this, configurationNode));
     }
 
@@ -166,5 +193,9 @@ public class MenuShopsPlugin extends JavaPlugin {
 
     public Messenger messenger() {
         return messenger;
+    }
+
+    public HashMap<Character, ItemStack> icons() {
+        return icons;
     }
 }

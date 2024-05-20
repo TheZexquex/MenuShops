@@ -159,4 +159,8 @@ public class Messenger {
     public ConfigurationNode rootNode() {
         return rootNode;
     }
+
+    public MenuShopsPlugin plugin() {
+        return plugin;
+    }
 }

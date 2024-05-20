@@ -1,5 +1,6 @@
 package dev.thezexquex.menushops.shop.value.values;
 
+import dev.thezexquex.menushops.MenuShopsPlugin;
 import dev.thezexquex.menushops.shop.value.Value;
 import dev.thezexquex.menushops.util.InventoryUtil;
 import org.bukkit.Material;
@@ -28,6 +29,11 @@ public class MaterialValue extends Value {
     @Override
     public boolean hasEnough(Player player, boolean stack) {
         return InventoryUtil.hasEnoughItems(player, new ItemStack(material), amount);
+    }
+
+    @Override
+    public boolean isAvailable(MenuShopsPlugin plugin) {
+        return true;
     }
 
     @Override

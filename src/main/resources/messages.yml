@@ -37,6 +37,24 @@ gui:
         - ""
         - "<!i><gray>Wert: <price>"
         - "<!i><gray>Linksklick: <gold>Verkaufen"
+    next-page:
+      display-name:
+        has-next: "<!i><gradient:#fc9403:#fce803>Nächste Seite</gradient>"
+        no-next: "<!i><gradient:#fc9403:#fce803>Nächste Seite</gradient>"
+      lore:
+        has-next:
+          - "<gray><!i>Klicke um auf Seite <dark_gray><!i>(<yellow><next-page><dark_gray>/ <yellow><max-page><dark_gray>)<!i> <gray>zu kommen"
+        no-next:
+          - "<red>Es gibt keine weiteren Seiten"
+    prev-page:
+      display-name:
+        has-prev: "<!i><gradient:#fc9403:#fce803>Vorherige Seite</gradient>"
+        no-prev: "<!i><gradient:#fc9403:#fce803>Vorherige Seite</gradient>"
+      lore:
+        has-prev:
+          - "<gray><!i>Klicke um auf Seite <dark_gray><!i>(<yellow><next-page><dark_gray>/ <yellow><max-page><dark_gray>)<!i> <gray>zu kommen"
+        no-prev:
+          - "<red>Es gibt keine vorherigen Seiten"
   value-format:
     material: "<gold><amount> <gray>x <gold><material>"
     vault-money: "<gold><amount> <gray>x <gold><material>"
@@ -49,10 +67,12 @@ action:
     success: "<prefix><green>Du hast <gold><amount> <gray>x <yellow><item-name> <green>für <price> <green>gekauft!"
     inventory-full: "<prefix><red>Dein Inventar ist voll"
     price-too-high: "<prefix><red>Du kannst dir dieses Item nicht leisten"
+    currency-unavailable: "<prefix><red>Die Zahlungsmethode, die das Item nutzt, ist derzeit nicht verfügbar"
   sell:
     success: "<prefix><green>Du hast <gold><amount> <gray>x <yellow><item-name> <green>für <price> <green>verkauft!"
     inventory-full: "<prefix><red>Dein Inventar ist voll"
     not-enough-items: "<prefix><red>Du hast zu wenig Items zum Verkaufen"
+    currency-unavailable: "<prefix><red>Die Zahlungsmethode, die das Item nutzt, ist derzeit nicht verfügbar"
 
 exception:
   value-parser:

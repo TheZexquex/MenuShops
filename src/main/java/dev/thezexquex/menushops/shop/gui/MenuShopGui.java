@@ -2,12 +2,11 @@ package dev.thezexquex.menushops.shop.gui;
 
 import dev.thezexquex.menushops.message.Messenger;
 import dev.thezexquex.menushops.shop.MenuShop;
-import dev.thezexquex.menushops.shop.gui.item.BackItem;
+import dev.thezexquex.menushops.shop.gui.item.NextPageItem;
 import dev.thezexquex.menushops.shop.gui.item.ChangeShopModeItem;
-import dev.thezexquex.menushops.shop.gui.item.ForwardItem;
+import dev.thezexquex.menushops.shop.gui.item.PrevPageItem;
 import dev.thezexquex.menushops.util.MiniComponent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,11 +22,12 @@ import xyz.xenondevs.invui.item.impl.SimpleItem;
 import xyz.xenondevs.invui.window.Window;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MenuShopGui {
-    public static Window constructGui(Player player, MenuShop menuShop, Messenger messenger) {
+    public static Window constructGui(Player player, MenuShop menuShop, Messenger messenger, HashMap<Character, ItemStack> icons) {
         List<Item> items = Arrays.stream(Material.values())
                 .filter(material -> !material.isAir() && material.isItem())
                 .map(material -> new SimpleItem(new ItemBuilder(material)))
@@ -38,17 +38,16 @@ public class MenuShopGui {
         var innerSellsStructure = new Structure(menuShop.innerStructure());
         var innerBuysStructure = new Structure(menuShop.innerStructure());
 
-        var outlineItem = new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE).setDisplayName("");
-        var forwardItem = new ForwardItem();
-        var backItem = new BackItem();
-        var buyBackItem = new ItemBuilder(Material.HOPPER).setDisplayName(MiniComponent.of("<gray>Noch kein Item verfügbar"));
+        var forwardItem = new PrevPageItem(icons.get('>'), messenger);
+        var backItem = new NextPageItem(icons.get('>'), messenger);
+        var buyBackItem = icons.get('R');
         var sellsTabItem = new ChangeShopModeItem(
                 0,
                 messenger.component(
                         NodePath.path("gui", "title", "shop-sells"),
                         Placeholder.component("shop-title", menuShop.title())
                 ),
-                new ItemStack(Material.IRON_INGOT)
+                icons.get('S')
         );
 
         var buysTabItem = new ChangeShopModeItem(
@@ -57,39 +56,57 @@ public class MenuShopGui {
                         NodePath.path("gui", "title", "shop-buys"),
                         Placeholder.component("shop-title", menuShop.title())
                 ),
-                new ItemStack(Material.GOLD_INGOT)
+                icons.get('B')
         );
 
 
         // The gui that sells items to the player
-        var sellGui = PagedGui.items().setStructure(innerSellsStructure)
-                .addIngredient('#', outlineItem)
+        var sellGuiBuilder = PagedGui.items().setStructure(innerSellsStructure)
                 .addIngredient('<', backItem)
                 .addIngredient('>', forwardItem)
                 .addIngredient('R', buyBackItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
-                .setContent(menuShop.shopSellsGuiItems(messenger).values().stream().toList())
-                .build();
+                .setContent(menuShop.shopSellsGuiItems(messenger).values().stream().toList());
+
+        icons.forEach((character, itemStack) -> {
+            if (!isReserved(character)) {
+                sellGuiBuilder.addIngredient(character, new SimpleItem(itemStack));
+            }
+        });
+
+        var sellGui = sellGuiBuilder.build();
 
         // The gui that buys items from the player
-        var buyGui = PagedGui.items().setStructure(innerBuysStructure)
-                .addIngredient('#', outlineItem)
+        var buyGuiBuilder = PagedGui.items().setStructure(innerBuysStructure)
                 .addIngredient('<', backItem)
                 .addIngredient('>', forwardItem)
                 .addIngredient('R', buyBackItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
-                .setContent(menuShop.shopBuysGuiItems(messenger).values().stream().toList())
-                .build();
+                .setContent(menuShop.shopBuysGuiItems(messenger).values().stream().toList());
+
+        icons.forEach((character, itemStack) -> {
+            if (!isReserved(character)) {
+                buyGuiBuilder.addIngredient(character, new SimpleItem(itemStack));
+            }
+        });
+
+        var buyGui = buyGuiBuilder.build();
 
         // The frame that contains both
-        var outerGui = TabGui.normal().setStructure(outerStructure)
-                .addIngredient('#', outlineItem)
+        var outerGuiBuilder = TabGui.normal().setStructure(outerStructure)
                 .addIngredient('S', sellsTabItem)
                 .addIngredient('B', buysTabItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
                 .addTab(sellGui)
-                .addTab(buyGui)
-                .build();
+                .addTab(buyGui);
+
+        icons.forEach((character, itemStack) -> {
+            if (!isReserved(character)) {
+                outerGuiBuilder.addIngredient(character, new SimpleItem(itemStack));
+            }
+        });
+
+        var outerGui = outerGuiBuilder.build();
 
 
         return Window.single()
@@ -101,4 +118,10 @@ public class MenuShopGui {
                 ))
                 .build();
     }
+
+    private static boolean isReserved(char c) {
+        var reservedChars = List.of('<', '>', '.', 'S', 'B', 'R');
+        return reservedChars.contains(c);
+    }
+
 }
