@@ -13,6 +13,7 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.spongepowered.configurate.NodePath;
 
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
@@ -77,7 +78,18 @@ public class MenuShopCommand extends BaseCommand {
                         CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::suggestion).toList()))
                 .literal("removeitem")
                 .required("type", enumParser(EditType.class))
-                .required("id", integerParser())
+                .required("id", integerParser(), (context, input) ->
+                        CompletableFuture.supplyAsync(() -> {
+                           var shop = plugin.shopService().getShop(context.get("shop-name"));
+                           if (shop.isEmpty()) {
+                               return Collections.emptyList();
+                           }
+                           var type = (EditType) context.get("type");
+                           if (type == EditType.BUY) {
+                               return shop.get().shopBuysItems().keySet().stream().map(integer -> Suggestion.suggestion(String.valueOf(integer))).toList();
+                           }
+                           return shop.get().shopSellsItems().keySet().stream().map(integer -> Suggestion.suggestion(String.valueOf(integer))).toList();
+                        }))
                 .handler(this::handleEditRemoveItem)
 
         );
