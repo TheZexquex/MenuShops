@@ -7,9 +7,9 @@ command:
       success: "<prefix><green>Finished reloading config and shops!"
       error: "<prefix><red>Error while reloading config and shops!"
     create:
-      success: "<prefix><green>Der Shop <yellow><shop> <green>wurde erstellt"
+      success: "<prefix><green>Der Shop <yellow><shop-name> <gray>(<shop-title><gray>) <green>wurde erstellt"
     delete:
-      success: "<prefix><green>Der Shop <yellow><shop> <green>wurde gelöscht"
+      success: "<prefix><green>Der Shop <yellow><shop-name> <green>wurde gelöscht"
     edit:
       add:
         item-null: "<prefix><red>Du kannst Luft nicht in den Shop hinzufügen!"

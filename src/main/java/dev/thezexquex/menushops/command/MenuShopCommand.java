@@ -5,6 +5,7 @@ import dev.thezexquex.menushops.command.core.BaseCommand;
 import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.gui.MenuShopGui;
 import dev.thezexquex.menushops.shop.value.ValueParser;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import org.spongepowered.configurate.NodePath;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
+import static org.incendo.cloud.bukkit.parser.PlayerParser.playerParser;
 import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
 import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 import static org.incendo.cloud.parser.standard.StringParser.*;
@@ -34,9 +36,9 @@ public class MenuShopCommand extends BaseCommand {
         commandManager.command(commandManager.commandBuilder("menushops")
                 .permission("menushops.command.menushops.open")
                 .literal("open")
-                .senderType(Player.class)
                 .required("shop-name", stringParser(), (context, input) ->
                         CompletableFuture.supplyAsync(() -> plugin.shopService().loadedShopNames().stream().map(Suggestion::suggestion).toList()))
+                .optional("target", playerParser())
                 .handler(this::handleOpen)
         );
 
@@ -110,19 +112,33 @@ public class MenuShopCommand extends BaseCommand {
                 NodePath.path("command", "menushops", "reload", "success"));
     }
 
-    private void handleOpen(CommandContext<Player> playerCommandContext) {
-        var player = playerCommandContext.sender();
+    private void handleOpen(CommandContext<CommandSender> playerCommandContext) {
+        var sender = playerCommandContext.sender();
+        Player playerToOpenFor;
+
+        if (playerCommandContext.contains("target")) {
+            playerToOpenFor = playerCommandContext.get("target");
+        } else if (sender instanceof Player player){
+            playerToOpenFor = player;
+        } else {
+            plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "no-target"));
+            return;
+        }
+
         var shopName = (String) playerCommandContext.get("shop-name");
 
         var shopOpt = plugin.shopService().getShop(shopName);
         if (shopOpt.isEmpty()) {
-            plugin.messenger().sendMessage(player, NodePath.path("command", "menushops", "not-found"));
+            if (!sender.equals(playerToOpenFor)) {
+                plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "not-found"));
+            }
+            plugin.messenger().sendMessage(playerToOpenFor, NodePath.path("command", "menushops", "not-found"));
             return;
         }
 
         var shop = shopOpt.get();
 
-        MenuShopGui.constructGui(player, shop, plugin.messenger(), plugin.icons()).open();
+        MenuShopGui.constructGui(playerToOpenFor, shop, plugin.messenger(), plugin.icons()).open();
     }
 
     private void handleCreate(CommandContext<Player> playerCommandContext) {
@@ -131,7 +147,12 @@ public class MenuShopCommand extends BaseCommand {
         var player = playerCommandContext.sender();
 
         plugin.shopService().createShop(shopName, shopTitle);
-        plugin.messenger().sendMessage(player, NodePath.path("command", "menushops", "create", "success"));
+        plugin.messenger().sendMessage(
+                player,
+                NodePath.path("command", "menushops", "create", "success"),
+                Placeholder.parsed("shop-name", shopName),
+                Placeholder.parsed("shop-title", shopTitle)
+        );
     }
 
     private void handleDelete(CommandContext<CommandSender> commandSenderCommandContext) {
@@ -139,10 +160,10 @@ public class MenuShopCommand extends BaseCommand {
         var sender = commandSenderCommandContext.sender();
 
         if (plugin.shopService().deleteShop(shopName)) {
-            plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "delete", "success"));
+            plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "delete", "success"), Placeholder.parsed("shop-name", shopName));
             return;
         }
-        plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "delete", "error"));
+        plugin.messenger().sendMessage(sender, NodePath.path("command", "menushops", "delete", "error"), Placeholder.parsed("shop-name", shopName));
     }
 
     private void handleEditAddItem(CommandContext<Player> playerCommandContext) {
