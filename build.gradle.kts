@@ -1,5 +1,4 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
-import java.net.URL
 
 plugins {
     id("java")
@@ -82,8 +81,10 @@ tasks {
         downloadPlugins {
             url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
             url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
-            url("https://cdn.thezexquex.dev/s/3s4T45pnTiYg4fe/download")
-            url("https://cdn.thezexquex.dev/s/jMzSo2LGSyZCXoB/download")
+            // CoinsEngine
+            url("https://api.spiget.org/v2/resources/84121/download")
+            // NightCore
+            url("https://github.com/nulli0n/nightcore-spigot/releases/download/v2.6.1-beta/nightcore-2.6.1.jar")
             //hangar("PlaceholderAPI", "2.11.5")
             jvmArgs("-Dcom.mojang.eula.agree=true")
         }
