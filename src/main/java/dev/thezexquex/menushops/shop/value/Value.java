@@ -4,10 +4,10 @@ import dev.thezexquex.menushops.MenuShopsPlugin;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.NodePath;
 
-public abstract class Value {
-    protected final int amount;
+public abstract class Value<T> {
+    protected final T amount;
 
-    public Value(int amount) {
+    public Value(T amount) {
         this.amount = amount;
     }
 
@@ -16,7 +16,7 @@ public abstract class Value {
     public abstract boolean hasEnough(Player player, MenuShopsPlugin plugin);
     public abstract boolean isAvailable(MenuShopsPlugin plugin);
     public abstract NodePath formatNode();
-    public int amount() {
+    public T amount() {
         return amount;
     }
 }

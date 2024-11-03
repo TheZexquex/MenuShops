@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.NodePath;
 
-public class MaterialValue extends Value {
+public class MaterialValue extends Value<Integer> {
     private final Material material;
 
     public MaterialValue(int amount, Material material) {

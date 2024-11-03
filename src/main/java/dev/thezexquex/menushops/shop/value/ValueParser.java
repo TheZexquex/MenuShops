@@ -6,30 +6,30 @@ import dev.thezexquex.menushops.hooks.externalhooks.VaultHook;
 import dev.thezexquex.menushops.shop.value.values.CoinsEngineValue;
 import dev.thezexquex.menushops.shop.value.values.MaterialValue;
 import dev.thezexquex.menushops.shop.value.values.VaultValue;
-import dev.thezexquex.menushops.util.KeyValue;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.coinsengine.api.CoinsEngineAPI;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ValueParser {
 
     public static Value fromPattern(String valuePattern) {
         var type = valuePattern.split("#")[0];
 
-        var amount = Integer.parseInt(valuePattern.split("#")[1].split(":")[1]);
+        var parsableAmount = valuePattern.split("#")[1].split(":")[1];
 
         if (type.equals("vault")) {
+            var amount = Double.parseDouble(parsableAmount);
             return new VaultValue(amount);
         }
         if (type.equals("coinsengine")) {
+            var amount = Double.parseDouble(parsableAmount);
             var currency = valuePattern.split("#")[1].split(":")[0];
             return new CoinsEngineValue(amount, currency);
         }
 
+        var amount = Integer.parseInt(parsableAmount);
         var material = Material.valueOf(valuePattern.split("#")[1].split(":")[0].toUpperCase());
         return new MaterialValue(amount, material);
     }
@@ -118,13 +118,23 @@ public class ValueParser {
         int errorPositionEnd = valuePattern.indexOf(possibleAmount) + possibleAmount.length();
 
         try{
-            var amount = Integer.parseInt(possibleAmount);
-            if (!(amount >= 0)) {
-                return new ValueParserResult(
-                        ValueParserResultType.INVALID_AMOUNT_SIZE,
-                        valuePattern.indexOf(possibleAmount),
-                        errorPositionEnd
-                );
+            var type = valuePattern.split("#")[0];
+
+            var valueParserResult = new ValueParserResult(
+                    ValueParserResultType.INVALID_AMOUNT_SIZE,
+                    valuePattern.indexOf(possibleAmount),
+                    errorPositionEnd
+            );
+            if (type.equals("material")) {
+                var amount = Integer.parseInt(possibleAmount);
+                if (!(amount >= 0)) {
+                    return valueParserResult;
+                }
+            } else {
+                var amount = Double.parseDouble(possibleAmount);
+                if (!(amount >= 0)) {
+                    return valueParserResult;
+                }
             }
 
             return new ValueParserResult(

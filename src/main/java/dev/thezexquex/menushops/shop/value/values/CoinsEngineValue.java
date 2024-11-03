@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 import org.spongepowered.configurate.NodePath;
 import su.nightexpress.coinsengine.api.CoinsEngineAPI;
 
-public class CoinsEngineValue extends Value {
+public class CoinsEngineValue extends Value<Double> {
     private final String currency;
-    public CoinsEngineValue(int amount, String currency) {
+    public CoinsEngineValue(double amount, String currency) {
         super(amount);
         this.currency = currency;
     }

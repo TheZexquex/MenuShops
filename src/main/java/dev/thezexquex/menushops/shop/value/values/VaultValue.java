@@ -7,9 +7,9 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.NodePath;
 
-public class VaultValue extends Value {
+public class VaultValue extends Value<Double> {
 
-    public VaultValue(int amount) {
+    public VaultValue(double amount) {
         super(amount);
     }
 
