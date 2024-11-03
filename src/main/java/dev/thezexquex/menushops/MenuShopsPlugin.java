@@ -5,15 +5,12 @@ import dev.thezexquex.menushops.command.MenuShopCommand;
 import dev.thezexquex.menushops.configuration.ConfigurationLoader;
 import dev.thezexquex.menushops.configuration.typeserializer.icon.IconTypeSerializer;
 import dev.thezexquex.menushops.data.ShopService;
-import dev.thezexquex.menushops.hooks.Hook;
 import dev.thezexquex.menushops.hooks.PluginHookService;
 import dev.thezexquex.menushops.hooks.externalhooks.CoinsEngineHook;
 import dev.thezexquex.menushops.hooks.externalhooks.PlaceholderApiHook;
 import dev.thezexquex.menushops.hooks.externalhooks.VaultHook;
 import dev.thezexquex.menushops.message.Messenger;
-import dev.thezexquex.menushops.shop.ShopItem;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.block.Vault;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,7 +19,7 @@ import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.caption.StandardCaptionKeys;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.paper.PaperCommandManager;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.NodePath;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -35,10 +32,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 public class MenuShopsPlugin extends JavaPlugin {
-    private PaperCommandManager<CommandSender> commandManager;
+    private LegacyPaperCommandManager<CommandSender> commandManager;
     private ShopService shopService;
     private PluginHookService pluginHookService;
-    private ConfigurationLoader configurationLoader;
     private Messenger messenger;
     private Economy vaultEconomy;
     private final HashMap<Character, ItemStack> icons = new HashMap<>();
@@ -77,7 +73,7 @@ public class MenuShopsPlugin extends JavaPlugin {
 
     private void registerCommands() {
         try {
-            this.commandManager = new PaperCommandManager<>(
+            this.commandManager = new LegacyPaperCommandManager<>(
                     this,
                     ExecutionCoordinator.simpleCoordinator(),
                     SenderMapper.identity()
@@ -161,7 +157,7 @@ public class MenuShopsPlugin extends JavaPlugin {
     }
 
     private void loadConfiguration() {
-        this.configurationLoader = new ConfigurationLoader(this);
+        ConfigurationLoader configurationLoader = new ConfigurationLoader(this);
 
         var messageConfigurationLoader = YamlConfigurationLoader.builder()
                 .path(getDataFolder().toPath().resolve("messages.yml"))

@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "dev.thezexquex"
-version = "1.0-SNAPSHOT"
+version = "0.1.1"
 
 val mainClass = "${group}.${rootProject.name.lowercase()}.MenuShopsPlugin"
 val shadeBasePath = "${group}.${rootProject.name.lowercase()}.libs."
@@ -31,20 +31,19 @@ repositories {
 
 dependencies {
     implementation("org.spongepowered", "configurate-yaml", "4.2.0-SNAPSHOT")
-    implementation("org.incendo", "cloud-paper", "2.0.0-beta.7")
-    implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.7")
-    implementation("xyz.xenondevs.invui", "invui", "1.30")
+    implementation("org.incendo", "cloud-paper", "2.0.0-beta.10")
+    implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.10")
+    implementation("xyz.xenondevs.invui", "invui", "1.39")
 
-    compileOnly("com.github.MilkBowl", "VaultAPI", "1.7")
     compileOnly("su.nightexpress.coinsengine", "CoinsEngine", "2.3.3")
-    compileOnly("io.papermc.paper", "paper-api", "1.20.6-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper", "paper-api", "1.21.1-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl", "VaultAPI", "1.7")
     compileOnly("me.clip", "placeholderapi", "2.11.5")
 }
 
 bukkit {
     name = "MenuShops"
-    version = "0.1.0"
+    version = "${rootProject.version}"
     description = "The only menu shop plugin you need"
 
     author = "TheZexquex"
@@ -53,7 +52,7 @@ bukkit {
 
     foliaSupported = false
 
-    apiVersion = "1.20"
+    apiVersion = "1.21"
 
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
 
@@ -76,7 +75,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.20.6")
+        minecraftVersion("1.21.1")
 
         downloadPlugins {
             url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
@@ -84,7 +83,7 @@ tasks {
             // CoinsEngine
             url("https://api.spiget.org/v2/resources/84121/download")
             // NightCore
-            url("https://github.com/nulli0n/nightcore-spigot/releases/download/v2.6.1-beta/nightcore-2.6.1.jar")
+            url("https://github.com/nulli0n/nightcore-spigot/releases/download/v2.7.0-beta/nightcore-2.7.0.jar")
             //hangar("PlaceholderAPI", "2.11.5")
             jvmArgs("-Dcom.mojang.eula.agree=true")
         }
