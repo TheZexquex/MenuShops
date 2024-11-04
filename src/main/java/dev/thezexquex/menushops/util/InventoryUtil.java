@@ -1,5 +1,6 @@
 package dev.thezexquex.menushops.util;
 
+import dev.thezexquex.menushops.shop.ShopAction;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,7 +42,21 @@ public class InventoryUtil {
         }
     }
 
-    public static boolean hasNoSpaceInInventory(Player player) {
-        return Arrays.stream(player.getInventory().getStorageContents()).noneMatch(Objects::isNull);
+    public static boolean hasNoSpaceInInventory(Player player, ItemStack itemStack, int amount) {
+        return getMaxEmptySpaceFor(player, itemStack) < amount;
+    }
+
+    public static int getMaxEmptySpaceFor(Player player, ItemStack itemStack) {
+        return Arrays.stream(player.getInventory()
+                .getStorageContents())
+                .mapToInt(item -> item == null ? itemStack.getMaxStackSize() : item.equals(itemStack) ? itemStack.getMaxStackSize() - item.getAmount() : 0)
+                .sum();
+    }
+
+    public static int getCurrentAmountFor(Player player, ItemStack itemStack) {
+        return Arrays.stream(player.getInventory()
+                        .getStorageContents())
+                .mapToInt(item -> item == null ? 0 : item.isSimilar(itemStack) ? item.getAmount() : 0)
+                .sum();
     }
 }

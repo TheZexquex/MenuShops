@@ -204,16 +204,9 @@ public class MenuShopCommand extends BaseCommand {
         var lowerAmount = lowerBoundValue.amount();
         var higherAmount = upperBoundValue.amount();
 
-        if (lowerAmount instanceof Integer lowerIntAmount && higherAmount instanceof Integer higherIntAmount) {
-            if (lowerIntAmount > higherIntAmount) {
-                plugin.messenger().sendMessage(sender, NodePath.path("exception", "value-parser", "lower-higher-than-upper"));
-                return;
-            }
-        } else if (lowerAmount instanceof Double lowerDoubleAmount && higherAmount instanceof Double higherDoubleAmount) {
-            if (lowerDoubleAmount > higherDoubleAmount) {
-                plugin.messenger().sendMessage(sender, NodePath.path("exception", "value-parser", "lower-higher-than-upper"));
-                return;
-            }
+        if (lowerAmount > higherAmount) {
+            plugin.messenger().sendMessage(sender, NodePath.path("exception", "value-parser", "lower-higher-than-upper"));
+            return;
         }
 
         var itemStack = sender.getInventory().getItemInMainHand();

@@ -36,7 +36,7 @@ public class ValueParser {
 
     public static String toPattern(Value value) {
         if (value instanceof MaterialValue materialValue){
-            return "material#" + materialValue.material().name().toLowerCase() + ":" + value.amount();
+            return "material#" + materialValue.material().name().toLowerCase() + ":" + (int) value.amount();
         } else if (value instanceof CoinsEngineValue coinsEngineValue){
             return "coinsengine#" + coinsEngineValue.currency() + ":" + coinsEngineValue.amount;
         } else {
@@ -126,9 +126,17 @@ public class ValueParser {
                     errorPositionEnd
             );
             if (type.equals("material")) {
-                var amount = Integer.parseInt(possibleAmount);
-                if (!(amount >= 0)) {
-                    return valueParserResult;
+                try {
+                    var amount = Integer.parseInt(possibleAmount);
+                    if (!(amount >= 0)) {
+                        return valueParserResult;
+                    }
+                } catch (NumberFormatException e) {
+                    return valueParserResult = new ValueParserResult(
+                            ValueParserResultType.INVALID_AMOUNT_NOT_AN_INTEGER,
+                            valuePattern.indexOf(possibleAmount),
+                            errorPositionEnd
+                    );
                 }
             } else {
                 var amount = Double.parseDouble(possibleAmount);
@@ -164,6 +172,7 @@ public class ValueParser {
         INVALID_VALUE_TYPE,
         INVALID_MATERIAL_VALUE,
         INVALID_AMOUNT_SIZE,
+        INVALID_AMOUNT_NOT_AN_INTEGER,
         INVALID_SYNTAX,
         INVALID_CURRENCY,
         AMOUNT_NO_NUMBER,

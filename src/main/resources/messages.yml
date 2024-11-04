@@ -31,12 +31,16 @@ gui:
         - ""
         - "<!i><gray>Preis: <price>"
         - "<!i><gray>Linksklick: <gold>Kaufen"
+        - "<!i><gray><key:sneak> Linksklick: <gold>Stack kaufen"
+        - "<!i><gray>Mittelklick: <gold>Inventar kaufen"
     # The lore for an item the user can sell
     shop-buys:
       lore:
         - ""
         - "<!i><gray>Wert: <price>"
         - "<!i><gray>Linksklick: <gold>Verkaufen"
+        - "<!i><gray><key:sneak> Linksklick: <gold>Stack verkaufen"
+        - "<!i><gray>Mittelklick: <gold>Inventar verkaufen"
     next-page:
       display-name:
         has-next: "<!i><gradient:#fc9403:#fce803>Nächste Seite</gradient>"

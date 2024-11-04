@@ -6,6 +6,10 @@ import dev.thezexquex.menushops.configuration.typeserializer.shop.ValueTypeSeria
 import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.value.Value;
+import dev.thezexquex.menushops.shop.value.values.CoinsEngineValue;
+import dev.thezexquex.menushops.shop.value.values.MaterialValue;
+import dev.thezexquex.menushops.shop.value.values.VaultValue;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.yaml.NodeStyle;

@@ -2,6 +2,7 @@ package dev.thezexquex.menushops.shop.gui.item;
 
 import dev.thezexquex.menushops.message.Messenger;
 import dev.thezexquex.menushops.shop.MenuShop;
+import dev.thezexquex.menushops.shop.ShopAction;
 import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.value.values.MaterialValue;
 import dev.thezexquex.menushops.util.InventoryUtil;
@@ -41,6 +42,7 @@ public class BuysItem extends AbstractItem {
         var itemId = itemStack.getItemMeta().getPersistentDataContainer().get(ShopItem.SHOP_ITEM_ID_KEY, PersistentDataType.INTEGER);
         var shopItem = menuShop.shopBuysItems().get(itemId);
 
+        var shopAction = ShopAction.of(clickType, shopItem);
 
         var currentValue = shopItem.currentValue();
 
@@ -49,21 +51,21 @@ public class BuysItem extends AbstractItem {
             return;
         }
 
-        if (currentValue instanceof MaterialValue && InventoryUtil.hasNoSpaceInInventory(player)) {
+        if (currentValue instanceof MaterialValue && InventoryUtil.hasNoSpaceInInventory(player, itemStack, shopAction.itemCountBuys(player))) {
             messenger.sendMessage(player, NodePath.path("action", "sell", "inventory-full"));
             return;
         }
 
-        if (!InventoryUtil.hasEnoughItems(player, shopItem.itemStack(), shopItem.itemStack().getAmount())) {
+        if (!InventoryUtil.hasEnoughItems(player, shopItem.itemStack(), shopAction.itemCountBuys(player))) {
             messenger.sendMessage(player, NodePath.path("action", "sell", "not-enough-items"));
             return;
         }
 
-        currentValue.deposit(player, messenger.plugin());
+        currentValue.deposit(player, messenger.plugin(), shopAction);
         messenger.sendMessage(
                 player,
                 NodePath.path("action", "sell", "success"),
-                Placeholder.parsed("amount", String.valueOf(itemStack.getAmount())),
+                Placeholder.parsed("amount", String.valueOf(shopAction.itemCountBuys(player))),
                 Placeholder.component("item-name",
                         shopItem.itemStack().getItemMeta().hasDisplayName() ?
                                 shopItem.itemStack().displayName() :
@@ -75,10 +77,10 @@ public class BuysItem extends AbstractItem {
                         Placeholder.parsed("material",
                                 (currentValue instanceof MaterialValue materialValue) ?
                                         materialValue.material().name() : ""),
-                        Placeholder.parsed("amount", String.valueOf(currentValue.amount()))))
+                        Placeholder.parsed("amount", String.valueOf(shopAction.combinedValue(currentValue.amount(), player)))))
         );
 
-        InventoryUtil.removeSpecificItemCount(player, shopItem.itemStack(), shopItem.itemStack().getAmount());
+        InventoryUtil.removeSpecificItemCount(player, shopItem.itemStack(), shopAction.itemCountBuys(player));
 
         player.playSound(Sound.sound(Key.key("entity.experience_orb.pickup"), Sound.Source.MASTER, 1, 1));
     }
