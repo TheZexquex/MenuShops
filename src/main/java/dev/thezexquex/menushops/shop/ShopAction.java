@@ -37,7 +37,16 @@ public class ShopAction {
         return shopItem;
     }
 
-    public double combinedValue(double originalAmount, Player player) {
+    public double combinedValueBuys(double originalAmount, Player player) {
+        return switch (type) {
+            case CURRENT -> originalAmount;
+            case STACK, INVENTORY -> BigDecimal.valueOf(
+                    originalAmount / shopItem.itemStack().getAmount() * itemCountBuys(player)
+            ).setScale(2, RoundingMode.HALF_DOWN).doubleValue();
+        };
+    }
+
+    public double combinedValueSells(double originalAmount, Player player) {
         return switch (type) {
             case CURRENT -> originalAmount;
             case STACK, INVENTORY -> BigDecimal.valueOf(

@@ -24,12 +24,12 @@ import xyz.xenondevs.invui.item.impl.AbstractItem;
 
 import java.util.Arrays;
 
-public class SellsItem extends AbstractItem {
+public class ShopSellsItem extends AbstractItem {
     private final ItemStack itemStack;
     private final MenuShop menuShop;
     private final Messenger messenger;
 
-    public SellsItem(ItemStack itemStack, MenuShop menuShop, Messenger messenger) {
+    public ShopSellsItem(ItemStack itemStack, MenuShop menuShop, Messenger messenger) {
         this.itemStack = itemStack;
         this.menuShop = menuShop;
         this.messenger = messenger;
@@ -81,7 +81,7 @@ public class SellsItem extends AbstractItem {
                                 Placeholder.parsed("material",
                                         (currentValue instanceof MaterialValue materialValue) ?
                                                 materialValue.material().name() : ""),
-                                Placeholder.parsed("amount", String.valueOf(shopAction.combinedValue(currentValue.amount(), player)))
+                                Placeholder.parsed("amount", String.valueOf(shopAction.combinedValueSells(currentValue.amount(), player)))
                         ))))
         );
 

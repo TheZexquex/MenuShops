@@ -1,8 +1,8 @@
 package dev.thezexquex.menushops.shop;
 
 import dev.thezexquex.menushops.message.Messenger;
-import dev.thezexquex.menushops.shop.gui.item.BuysItem;
-import dev.thezexquex.menushops.shop.gui.item.SellsItem;
+import dev.thezexquex.menushops.shop.gui.item.ShopBuysItem;
+import dev.thezexquex.menushops.shop.gui.item.ShopSellsItem;
 import dev.thezexquex.menushops.shop.value.Value;
 import dev.thezexquex.menushops.shop.value.values.MaterialValue;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -89,7 +89,7 @@ public class ShopItem {
             modifiedItemStack.lore(oldLore);
         }
 
-        return new SellsItem(modifiedItemStack, menuShop, messenger);
+        return new ShopSellsItem(modifiedItemStack, menuShop, messenger);
     }
 
     public Item toBuysItem(Messenger messenger, int id, MenuShop menuShop) {
@@ -125,6 +125,6 @@ public class ShopItem {
             modifiedItemStack.lore(oldLore);
         }
 
-        return new BuysItem(modifiedItemStack, menuShop, messenger);
+        return new ShopBuysItem(modifiedItemStack, menuShop, messenger);
     }
 }

@@ -22,7 +22,7 @@ public class CoinsEngineValue extends Value {
 
     @Override
     public void withdraw(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = shopAction.combinedValue(amount, player);
+        var actualAmount = shopAction.combinedValueSells(amount, player);
 
         var curr = CoinsEngineAPI.getCurrency(currency);
         if (curr != null) {
@@ -34,12 +34,7 @@ public class CoinsEngineValue extends Value {
     public void deposit(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
         var curr = CoinsEngineAPI.getCurrency(currency);
 
-        var actualAmount = switch (shopAction.type()) {
-            case CURRENT -> amount;
-            case STACK, INVENTORY -> BigDecimal.valueOf(
-                    amount / shopAction.shopItem().itemStack().getAmount() * shopAction.itemCountBuys(player)
-            ).setScale(2, RoundingMode.HALF_DOWN).doubleValue();
-        };
+        var actualAmount = shopAction.combinedValueBuys(amount, player);
 
         if (curr != null) {
             CoinsEngineAPI.addBalance(player, curr, actualAmount);
@@ -48,12 +43,7 @@ public class CoinsEngineValue extends Value {
 
     @Override
     public boolean hasEnough(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = switch (shopAction.type()) {
-            case CURRENT -> amount;
-            case STACK, INVENTORY -> BigDecimal.valueOf(
-                    amount / shopAction.shopItem().itemStack().getAmount() * shopAction.itemCountSells(player)
-            ).setScale(2, RoundingMode.HALF_DOWN).doubleValue();
-        };
+        var actualAmount = shopAction.combinedValueSells(amount, player);
 
         var curr = CoinsEngineAPI.getCurrency(currency);
         if (curr == null) {

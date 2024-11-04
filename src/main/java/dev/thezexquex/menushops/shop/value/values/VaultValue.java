@@ -21,31 +21,21 @@ public class VaultValue extends Value {
 
     @Override
     public void withdraw(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = shopAction.combinedValue(amount, player);
+        var actualAmount = shopAction.combinedValueSells(amount, player);
 
         plugin.vaultEconomy().withdrawPlayer(player, actualAmount);
     }
 
     @Override
     public void deposit(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = switch (shopAction.type()) {
-            case CURRENT -> amount;
-            case STACK, INVENTORY -> BigDecimal.valueOf(
-                    amount / shopAction.shopItem().itemStack().getAmount() * shopAction.itemCountBuys(player)
-            ).setScale(2, RoundingMode.HALF_DOWN).doubleValue();
-        };
+        var actualAmount = shopAction.combinedValueBuys(amount, player);
 
         plugin.vaultEconomy().depositPlayer(player, actualAmount);
     }
 
     @Override
     public boolean hasEnough(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = switch (shopAction.type()) {
-            case CURRENT -> amount;
-            case STACK, INVENTORY -> BigDecimal.valueOf(
-                    amount / shopAction.shopItem().itemStack().getAmount() * shopAction.itemCountSells(player)
-            ).setScale(2, RoundingMode.HALF_DOWN).doubleValue();
-        };
+        var actualAmount = shopAction.combinedValueSells(amount, player);
 
         return plugin.vaultEconomy().has(player, actualAmount);
     }

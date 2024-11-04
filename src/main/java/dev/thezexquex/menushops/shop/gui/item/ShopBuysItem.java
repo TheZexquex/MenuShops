@@ -21,12 +21,12 @@ import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 
-public class BuysItem extends AbstractItem {
+public class ShopBuysItem extends AbstractItem {
     private final ItemStack itemStack;
     private final MenuShop menuShop;
     private final Messenger messenger;
 
-    public BuysItem(ItemStack itemStack, MenuShop menuShop, Messenger messenger) {
+    public ShopBuysItem(ItemStack itemStack, MenuShop menuShop, Messenger messenger) {
         this.itemStack = itemStack;
         this.menuShop = menuShop;
         this.messenger = messenger;
@@ -56,7 +56,8 @@ public class BuysItem extends AbstractItem {
             return;
         }
 
-        if (!InventoryUtil.hasEnoughItems(player, shopItem.itemStack(), shopAction.itemCountBuys(player))) {
+        if (!InventoryUtil.hasEnoughItems(player, shopItem.itemStack(), shopAction.itemCountBuys(player))
+                || InventoryUtil.getCurrentAmountFor(player, shopItem.itemStack()) == 0) {
             messenger.sendMessage(player, NodePath.path("action", "sell", "not-enough-items"));
             return;
         }
@@ -77,7 +78,7 @@ public class BuysItem extends AbstractItem {
                         Placeholder.parsed("material",
                                 (currentValue instanceof MaterialValue materialValue) ?
                                         materialValue.material().name() : ""),
-                        Placeholder.parsed("amount", String.valueOf(shopAction.combinedValue(currentValue.amount(), player)))))
+                        Placeholder.parsed("amount", String.valueOf(shopAction.combinedValueBuys(currentValue.amount(), player)))))
         );
 
         InventoryUtil.removeSpecificItemCount(player, shopItem.itemStack(), shopAction.itemCountBuys(player));
