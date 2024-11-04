@@ -1,6 +1,9 @@
 # MenuShops
 ## The only Minecraft GUI shop plugin you'll ever need, featuring fully customizable messages and GUI
 
+<img src="https://github.com/user-attachments/assets/73a4da74-d03d-4ca7-ad7e-0474459b787f" height="300">
+<img src="https://github.com/user-attachments/assets/ca29f6ad-85e5-4d37-a6a6-23bea0324afd" height="300">
+
 ## Commands:
 `/menushops reload` Reloads the configuration, the shops and the external Hooks. (See Hooks)<br>
 `/menushops create <shop-name> "<shop-title>"` Creates a new MenuShop with a custom title (supports [MiniMessage](https://docs.advntr.dev/minimessage/index.html))<br>
