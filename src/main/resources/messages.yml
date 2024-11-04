@@ -8,6 +8,7 @@ command:
       error: "<prefix><red>Error while reloading config and shops!"
     create:
       success: "<prefix><green>Der Shop <yellow><shop-name> <gray>(<shop-title><gray>) <green>wurde erstellt"
+      already-exists: "<prefix><red>Es gibt bereits einen Shop mit diesem Namen"
     delete:
       success: "<prefix><green>Der Shop <yellow><shop-name> <green>wurde gelöscht"
     edit:

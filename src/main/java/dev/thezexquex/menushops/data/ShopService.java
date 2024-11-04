@@ -108,8 +108,8 @@ public class ShopService {
         try {
             var shopNode = shopConfigLoader.load();
 
-            shopNode.removeChild("sells-items");
-            shopNode.removeChild("buys-items");
+            shopNode.removeChild("shop-sells-items");
+            shopNode.removeChild("shop-buys-items");
 
             shopNode.set(menuShop);
             shopConfigLoader.save(shopNode);

@@ -91,6 +91,10 @@ public class MenuShopsPlugin extends JavaPlugin {
 
         
         registry.registerProvider(
+                CaptionProvider.forCaption(AdditionalCaptionKeys.ARGUMENT_PARSE_FAILURE_SHOP,
+                sender -> messenger.getString(NodePath.path("exception", "argument-parse", "shop")))
+        );
+        registry.registerProvider(
                 CaptionProvider.forCaption(AdditionalCaptionKeys.ARGUMENT_PARSE_FAILURE_VALUE,
                 sender -> messenger.getString(NodePath.path("exception", "argument-parse", "value")))
         );

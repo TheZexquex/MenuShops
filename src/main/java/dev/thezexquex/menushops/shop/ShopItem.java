@@ -28,6 +28,10 @@ public class ShopItem {
         this.currentValue = lowerBoundValue;
     }
 
+    public enum ItemType {
+        SHOP_SELLS, SHOP_BUYS
+    }
+
     public Value upperBoundValue() {
         return upperBoundValue;
     }
@@ -54,6 +58,10 @@ public class ShopItem {
 
     public ItemStack itemStack() {
         return itemStack.clone();
+    }
+
+    public void itemStack(ItemStack itemStack) {
+        this.itemStack = itemStack.clone();
     }
 
     public Item toSellsItem(Messenger messenger, int id, MenuShop menuShop) {

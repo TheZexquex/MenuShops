@@ -12,14 +12,14 @@ public class MenuShop {
     private Component title;
     private String[] outerStructure;
     private String[] innerStructure;
-    private final HashMap<Integer, ShopItem> shopSellsItems;
-    private final HashMap<Integer, ShopItem> shopBuysItems;
+    private final LinkedList<ShopItem> shopSellsItems;
+    private final LinkedList<ShopItem> shopBuysItems;
 
     public MenuShop(String identifier, Component title) {
         this.identifier = identifier;
         this.title = title;
-        this.shopSellsItems = new HashMap<>();
-        this.shopBuysItems = new HashMap<>();
+        this.shopSellsItems = new LinkedList<>();
+        this.shopBuysItems = new LinkedList<>();
         this.outerStructure = DefaultValues.STANDARD_STRUCTURE_OUTER;
         this.innerStructure = DefaultValues.STANDARD_STRUCTURE_INNER;
     }
@@ -27,8 +27,8 @@ public class MenuShop {
     public MenuShop(String identifier, Component title, String[] outerStructure, String[] innerStructure) {
         this.identifier = identifier;
         this.title = title;
-        this.shopSellsItems = new HashMap<>();
-        this.shopBuysItems = new HashMap<>();
+        this.shopSellsItems = new LinkedList<>();
+        this.shopBuysItems = new LinkedList<>();
         this.outerStructure = outerStructure;
         this.innerStructure = innerStructure;
     }
@@ -37,8 +37,8 @@ public class MenuShop {
     public MenuShop(
             String identifier,
             Component title,
-            HashMap<Integer, ShopItem> shopSellsItems,
-            HashMap<Integer, ShopItem> shopBuysItems
+            LinkedList<ShopItem> shopSellsItems,
+            LinkedList<ShopItem>  shopBuysItems
     ) {
         this.identifier = identifier;
         this.title = title;
@@ -51,8 +51,8 @@ public class MenuShop {
     public MenuShop(
             String identifier,
             Component title,
-            HashMap<Integer, ShopItem> shopSellsItems,
-            HashMap<Integer, ShopItem> shopBuysItems,
+            LinkedList<ShopItem>  shopSellsItems,
+            LinkedList<ShopItem>  shopBuysItems,
             String[] outerStructure,
             String[] innerStructure
     ) {
@@ -64,11 +64,11 @@ public class MenuShop {
         this.innerStructure = innerStructure;
     }
 
-    public HashMap<Integer, ShopItem> shopSellsItems() {
+    public LinkedList<ShopItem>  shopSellsItems() {
         return shopSellsItems;
     }
 
-    public HashMap<Integer, ShopItem> shopBuysItems() {
+    public LinkedList<ShopItem>  shopBuysItems() {
         return shopBuysItems;
     }
 
@@ -104,28 +104,28 @@ public class MenuShop {
         this.title = title;
     }
 
-    public void addSellsItem(ShopItem shopItem) {
-        shopSellsItems.put(shopSellsItems.values().size(), shopItem);
+    public boolean hasItem(int id, ShopItem.ItemType type) {
+        return id >= 0 && type == ShopItem.ItemType.SHOP_BUYS ? id < shopBuysItems.size() : id < shopSellsItems.size();
     }
 
-    public void addBuysItem(ShopItem shopItem) {
-        shopBuysItems.put(shopBuysItems.values().size(), shopItem);
+    public void addItem(ShopItem shopItem, ShopItem.ItemType type) {
+        if (type == ShopItem.ItemType.SHOP_SELLS) {
+            shopSellsItems.addLast(shopItem);
+            return;
+        };
+        shopBuysItems.addLast(shopItem);
     }
 
-    public boolean removeSellsItem(int id) {
-        var exists = shopSellsItems.containsKey(id);
-        shopSellsItems.remove(id);
-        return exists;
+    public boolean removeItem(int id, ShopItem.ItemType type) {
+        if (type == ShopItem.ItemType.SHOP_SELLS) {
+            return shopSellsItems.remove(id) != null;
+        } else {
+            return shopBuysItems.remove(id) != null;
+        }
     }
 
-    public boolean removeBuysItem(int id) {
-        var exists = shopBuysItems.containsKey(id);
-        shopBuysItems.remove(id);
-        return exists;
-    }
-
-    public void editSellsItem(int id, ItemEditInfo itemEditInfo) {
-        var shopItem = shopSellsItems.get(id);
+    public void editItem(int id, ItemEditInfo itemEditInfo, ShopItem.ItemType type) {
+        var shopItem = type == ShopItem.ItemType.SHOP_SELLS ? shopSellsItems.get(id) : shopBuysItems.get(id);
 
         if (itemEditInfo.newLowerBoundValue() != null) {
             shopItem.lowerBoundValue(itemEditInfo.newLowerBoundValue());
@@ -133,20 +133,57 @@ public class MenuShop {
         if (itemEditInfo.newUpperBoundValue() != null) {
             shopItem.upperBoundValue(itemEditInfo.newUpperBoundValue());
         }
+        if (itemEditInfo.itemStack() != null) {
+            shopItem.itemStack(itemEditInfo.itemStack());
+        }
 
-        shopSellsItems.put(id, shopItem);
+        insertItem(id, shopItem, type, true);
     }
 
-    public HashMap<Integer, Item> shopSellsGuiItems(Messenger messenger) {
-        var guiItems = new HashMap<Integer, Item>();
-        shopSellsItems.forEach((integer, shopItem) -> guiItems.put(integer, shopItem.toSellsItem(messenger, integer, this)));
+    public void insertItem(int id, ShopItem shopItem, ShopItem.ItemType type, boolean replace) {
+        if (type == ShopItem.ItemType.SHOP_SELLS) {
+            shopSellsItems.add(id, shopItem);
+            if (replace) {
+                shopSellsItems.remove(id + 1);
+            }
+        } else {
+            shopBuysItems.add(id, shopItem);
+            if (replace) {
+                shopBuysItems.remove(id + 1);
+            }
+        }
+    }
+
+    public void swapItems(int firstId, int secondId, ShopItem.ItemType type) {
+        ShopItem firstItem;
+        ShopItem secondItem;
+        if (type == ShopItem.ItemType.SHOP_SELLS) {
+            firstItem = shopSellsItems.get(firstId);
+            secondItem = shopSellsItems.get(secondId);
+
+            shopSellsItems.set(firstId, secondItem);
+            shopSellsItems.set(secondId, firstItem);
+        } else {
+            firstItem = shopBuysItems.get(firstId);
+            secondItem = shopBuysItems.get(secondId);
+
+            shopBuysItems.set(firstId, secondItem);
+            shopBuysItems.set(secondId, firstItem);
+        }
+    }
+
+
+    public LinkedList<Item> shopSellsGuiItems(Messenger messenger) {
+        var guiItems = new LinkedList<Item>();
+
+        shopSellsItems.forEach(shopItem -> guiItems.addLast(shopItem.toSellsItem(messenger, shopSellsItems.indexOf(shopItem), this)));
 
         return guiItems;
     }
 
-    public HashMap<Integer, Item> shopBuysGuiItems(Messenger messenger) {
-        var guiItems = new HashMap<Integer, Item>();
-        shopBuysItems.forEach((integer, shopItem) -> guiItems.put(integer, shopItem.toBuysItem(messenger, integer, this)));
+    public LinkedList<Item> shopBuysGuiItems(Messenger messenger) {
+        var guiItems = new LinkedList<Item>();
+        shopBuysItems.forEach(shopItem -> guiItems.addLast(shopItem.toBuysItem(messenger, shopBuysItems.indexOf(shopItem), this)));
 
         return guiItems;
     }

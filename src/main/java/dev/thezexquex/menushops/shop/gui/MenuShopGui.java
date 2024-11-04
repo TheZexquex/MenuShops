@@ -28,12 +28,6 @@ import java.util.stream.Collectors;
 
 public class MenuShopGui {
     public static Window constructGui(Player player, MenuShop menuShop, Messenger messenger, HashMap<Character, ItemStack> icons) {
-        List<Item> items = Arrays.stream(Material.values())
-                .filter(material -> !material.isAir() && material.isItem())
-                .map(material -> new SimpleItem(new ItemBuilder(material)))
-                .collect(Collectors.toList());
-
-
         var outerStructure = new Structure(menuShop.outerStructure());
         var innerSellsStructure = new Structure(menuShop.innerStructure());
         var innerBuysStructure = new Structure(menuShop.innerStructure());
@@ -66,7 +60,7 @@ public class MenuShopGui {
                 .addIngredient('>', forwardItem)
                 .addIngredient('R', buyBackItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
-                .setContent(menuShop.shopSellsGuiItems(messenger).values().stream().toList());
+                .setContent(menuShop.shopSellsGuiItems(messenger));
 
         icons.forEach((character, itemStack) -> {
             if (!isReserved(character)) {
@@ -82,7 +76,7 @@ public class MenuShopGui {
                 .addIngredient('>', forwardItem)
                 .addIngredient('R', buyBackItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
-                .setContent(menuShop.shopBuysGuiItems(messenger).values().stream().toList());
+                .setContent(menuShop.shopBuysGuiItems(messenger));
 
         icons.forEach((character, itemStack) -> {
             if (!isReserved(character)) {
