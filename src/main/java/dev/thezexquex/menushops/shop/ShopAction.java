@@ -16,9 +16,9 @@ public class ShopAction {
     }
 
     public static ShopAction of(ClickType clickType, ShopItem shopItem) {
-        if (clickType == ClickType.SHIFT_LEFT || clickType == ClickType.SHIFT_RIGHT) {
-            return  new ShopAction(shopItem, ShopAction.Type.STACK);
-        } else if (clickType == ClickType.MIDDLE) {
+        if (clickType == ClickType.SHIFT_LEFT) {
+            return new ShopAction(shopItem, ShopAction.Type.STACK);
+        } else if (clickType == ClickType.SHIFT_RIGHT) {
             return new ShopAction(shopItem, ShopAction.Type.INVENTORY);
         }
         return new ShopAction(shopItem, ShopAction.Type.CURRENT);
