@@ -50,8 +50,10 @@ gui:
         no-next: "<!i><gradient:#fc9403:#fce803>Nächste Seite</gradient>"
       lore:
         has-next:
+          - "<gray><!i>Du bist derzeit auf Seite <yellow><curr-page>"
           - "<gray><!i>Klicke um auf Seite <dark_gray><!i>(<yellow><next-page><dark_gray>/ <yellow><max-page><dark_gray>)<!i> <gray>zu kommen"
         no-next:
+          - "<gray><!i>Du bist derzeit auf Seite <yellow><curr-page>"
           - "<red>Es gibt keine weiteren Seiten"
     prev-page:
       display-name:
@@ -59,8 +61,10 @@ gui:
         no-prev: "<!i><gradient:#fc9403:#fce803>Vorherige Seite</gradient>"
       lore:
         has-prev:
-          - "<gray><!i>Klicke um auf Seite <dark_gray><!i>(<yellow><next-page><dark_gray>/ <yellow><max-page><dark_gray>)<!i> <gray>zu kommen"
+          - "<gray><!i>Du bist derzeit auf Seite <yellow><curr-page>"
+          - "<gray><!i>Klicke um auf Seite <dark_gray><!i>(<yellow><prev-page><dark_gray>/ <yellow><max-page><dark_gray>)<!i> <gray>zu kommen"
         no-prev:
+          - "<gray><!i>Du bist derzeit auf Seite <yellow><curr-page>"
           - "<red>Es gibt keine vorherigen Seiten"
   value-format:
     material: "<gold><amount> <gray>x <gold><material>"
