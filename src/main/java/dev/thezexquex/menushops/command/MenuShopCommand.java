@@ -7,7 +7,6 @@ import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.gui.MenuShopGui;
 import dev.thezexquex.menushops.shop.value.Value;
-import dev.thezexquex.menushops.shop.value.ValueParser;
 import dev.thezexquex.menushops.util.KeyValue;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
@@ -27,11 +26,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static dev.thezexquex.menushops.command.argument.ShopParser.shopParser;
+import static dev.thezexquex.menushops.command.argument.ValueArgumentParser.valueParser;
 import static org.incendo.cloud.bukkit.parser.ItemStackParser.itemStackParser;
 import static org.incendo.cloud.bukkit.parser.PlayerParser.playerParser;
 import static org.incendo.cloud.parser.standard.EnumParser.enumParser;
 import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
-import static org.incendo.cloud.parser.standard.StringParser.*;
+import static org.incendo.cloud.parser.standard.StringParser.quotedStringParser;
+import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
 public class MenuShopCommand extends BaseCommand {
     public MenuShopCommand(MenuShopsPlugin plugin) {
@@ -74,8 +75,8 @@ public class MenuShopCommand extends BaseCommand {
                 .required("shop", shopParser(plugin.shopService()))
                 .literal("additem")
                 .required("type", enumParser(ShopItem.ItemType.class))
-                .required("lower-bound", quotedStringParser())
-                .required("upper-bound", quotedStringParser());
+                .required("lower-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()))
+                .required("upper-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()));
 
         var setItemBuilder = commandManager.commandBuilder("menushops")
                 .senderType(Player.class)
@@ -85,8 +86,8 @@ public class MenuShopCommand extends BaseCommand {
                 .literal("setitem")
                 .required("type", enumParser(ShopItem.ItemType.class))
                 .required("id", integerParser(),  this::suggestItems)
-                .required("lower-bound", quotedStringParser())
-                .required("upper-bound", quotedStringParser());
+                .required("lower-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()))
+                .required("upper-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()));
 
         var insertItemBuilder = commandManager.commandBuilder("menushops")
                 .senderType(Player.class)
@@ -96,8 +97,8 @@ public class MenuShopCommand extends BaseCommand {
                 .literal("insertitembefore")
                 .required("type", enumParser(ShopItem.ItemType.class))
                 .required("id", integerParser(),  this::suggestItems)
-                .required("lower-bound", quotedStringParser())
-                .required("upper-bound", quotedStringParser());
+                .required("lower-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()))
+                .required("upper-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()));
 
         // /menushops edit <shop> setitem <type> <id> <lower-value> <upper-value> @hand
         commandManager.command(setItemBuilder
@@ -165,8 +166,8 @@ public class MenuShopCommand extends BaseCommand {
         // /menushops edit <shop> additem <type> <lower-value> <upper-value>
         commandManager.command(editItemBuilder
                 .literal("values")
-                .required("lower-bound", quotedStringParser())
-                .required("upper-bound", quotedStringParser())
+                .required("lower-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()))
+                .required("upper-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()))
                 .handler(this::handleEditEditItemValues)
         );
 
@@ -414,26 +415,8 @@ public class MenuShopCommand extends BaseCommand {
     }
 
     public KeyValue<Value, Value> handleValueParsing(CommandSender sender, CommandContext<Player> context) {
-        var lowerBoundPattern = (String) context.get("lower-bound");
-        var upperBoundPattern = (String) context.get("upper-bound");
-
-        var lowerBoundValueParserResult = ValueParser.validate(lowerBoundPattern, plugin.pluginHookService());
-        var upperBoundValueParserResult = ValueParser.validate(upperBoundPattern, plugin.pluginHookService());
-
-        if (lowerBoundValueParserResult.valueParserResultType() != ValueParser.ValueParserResultType.VALID) {
-            sender.sendRichMessage("<red>Error while parsing lower-bound-value: " + lowerBoundValueParserResult.valueParserResultType());
-            sender.sendRichMessage("<red>Invalid Pattern: " + ValueArgumentParser.buildErrorMark(lowerBoundPattern, lowerBoundValueParserResult));
-            return null;
-        }
-
-        if (upperBoundValueParserResult.valueParserResultType() != ValueParser.ValueParserResultType.VALID) {
-            sender.sendRichMessage("<red>Error while parsing upper-bound-value: " + upperBoundValueParserResult.valueParserResultType());
-            sender.sendRichMessage("<red>Invalid Pattern: " + ValueArgumentParser.buildErrorMark(upperBoundPattern, upperBoundValueParserResult));
-            return null;
-        }
-
-        var lowerBoundValue = ValueParser.fromPattern(lowerBoundPattern);
-        var upperBoundValue = ValueParser.fromPattern(upperBoundPattern);
+        var lowerBoundValue = (Value) context.get("lower-bound");
+        var upperBoundValue = (Value) context.get("upper-bound");
 
         var lowerAmount = lowerBoundValue.amount();
         var higherAmount = upperBoundValue.amount();

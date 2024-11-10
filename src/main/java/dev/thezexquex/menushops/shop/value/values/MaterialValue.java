@@ -2,16 +2,12 @@ package dev.thezexquex.menushops.shop.value.values;
 
 import dev.thezexquex.menushops.MenuShopsPlugin;
 import dev.thezexquex.menushops.shop.ShopAction;
-import dev.thezexquex.menushops.shop.value.Amount;
 import dev.thezexquex.menushops.shop.value.Value;
 import dev.thezexquex.menushops.util.InventoryUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.NodePath;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class MaterialValue extends Value {
     private final Material material;

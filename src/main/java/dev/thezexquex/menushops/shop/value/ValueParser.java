@@ -1,6 +1,6 @@
 package dev.thezexquex.menushops.shop.value;
 
-import dev.thezexquex.menushops.hooks.PluginHookService;
+import dev.thezexquex.menushops.hooks.PluginHookRegistry;
 import dev.thezexquex.menushops.hooks.externalhooks.CoinsEngineHook;
 import dev.thezexquex.menushops.hooks.externalhooks.VaultHook;
 import dev.thezexquex.menushops.shop.value.values.CoinsEngineValue;
@@ -44,7 +44,7 @@ public class ValueParser {
         }
     }
 
-    public static ValueParserResult validate(String valuePattern, PluginHookService pluginHookService) {
+    public static ValueParserResult validate(String valuePattern, PluginHookRegistry pluginHookRegistry) {
         var type = valuePattern.split("#")[0];
 
         switch (type) {
@@ -84,14 +84,14 @@ public class ValueParser {
                 }
             }
             case "vault" -> {
-                if (!pluginHookService.isAvailable(VaultHook.class)) {
+                if (!pluginHookRegistry.isAvailable(VaultHook.class)) {
                     return new ValueParserResult(ValueParserResultType.HOOK_NOT_AVAILABLE, 0, type.length());
                 }
 
                 return verifyAmount(valuePattern);
             }
             case "coinsengine" -> {
-                if (!pluginHookService.isAvailable(CoinsEngineHook.class)) {
+                if (!pluginHookRegistry.isAvailable(CoinsEngineHook.class)) {
                     return new ValueParserResult(ValueParserResultType.HOOK_NOT_AVAILABLE, 0, type.length());
                 }
 

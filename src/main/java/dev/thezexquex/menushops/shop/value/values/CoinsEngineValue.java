@@ -1,17 +1,12 @@
 package dev.thezexquex.menushops.shop.value.values;
 
 import dev.thezexquex.menushops.MenuShopsPlugin;
-import dev.thezexquex.menushops.hooks.Hook;
 import dev.thezexquex.menushops.hooks.externalhooks.CoinsEngineHook;
 import dev.thezexquex.menushops.shop.ShopAction;
 import dev.thezexquex.menushops.shop.value.Value;
-import dev.thezexquex.menushops.util.InventoryUtil;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.NodePath;
 import su.nightexpress.coinsengine.api.CoinsEngineAPI;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class CoinsEngineValue extends Value {
     private final String currency;

@@ -12,6 +12,7 @@ import org.spongepowered.configurate.NodePath;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 public class VaultValue extends Value {
 
@@ -48,5 +49,9 @@ public class VaultValue extends Value {
     @Override
     public NodePath formatNode() {
         return NodePath.path("gui", "value-format", "vault-money");
+    }
+
+    public static Iterable<String> suggestions() {
+        return List.of("money");
     }
 }

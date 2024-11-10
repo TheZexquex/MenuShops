@@ -1,7 +1,7 @@
 package dev.thezexquex.menushops.message;
 
 import dev.thezexquex.menushops.MenuShopsPlugin;
-import dev.thezexquex.menushops.hooks.PluginHookService;
+import dev.thezexquex.menushops.hooks.PluginHookRegistry;
 import dev.thezexquex.menushops.hooks.externalhooks.PlaceholderApiHook;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
@@ -22,13 +22,13 @@ public class Messenger {
     private final ConfigurationNode rootNode;
     private final MiniMessage miniMessage;
     private final MenuShopsPlugin plugin;
-    private final PluginHookService pluginHookService;
+    private final PluginHookRegistry pluginHookRegistry;
 
     public Messenger(MenuShopsPlugin plugin, ConfigurationNode rootNode) {
         this.plugin = plugin;
         this.rootNode = rootNode;
         this.miniMessage = MiniMessage.miniMessage();
-        this.pluginHookService = plugin.pluginHookService();
+        this.pluginHookRegistry = plugin.pluginHookService();
     }
 
     public String getString(NodePath path) {
@@ -93,7 +93,7 @@ public class Messenger {
         if (messageString == null) {
             return Component.text("N/A " + path);
         }
-        var papiParsedString = pluginHookService.isAvailable(PlaceholderApiHook.class) ? PlaceholderAPI.setPlaceholders(player, messageString) : messageString;
+        var papiParsedString = pluginHookRegistry.isAvailable(PlaceholderApiHook.class) ? PlaceholderAPI.setPlaceholders(player, messageString) : messageString;
         return miniMessage.deserialize(
                 papiParsedString,
                 TagResolver.resolver(resolvers),

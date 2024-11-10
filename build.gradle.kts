@@ -5,6 +5,8 @@ plugins {
     id("io.github.goooler.shadow") version "8.1.7"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
     id("xyz.jpenilla.run-paper") version "2.3.0"
+
+    id("io.papermc.paperweight.userdev") version "1.7.4"
 }
 
 group = "dev.thezexquex"
@@ -20,25 +22,41 @@ repositories {
     maven("https://repo.xenondevs.xyz/releases")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven {
+
+    maven("https://repo.unknowncity.de/public")
+    /*maven {
         url = uri("https://repo.unknowncity.de/private")
         credentials (PasswordCredentials::class) {
             username = System.getenv("MVN_REPO_USERNAME")
             password = System.getenv("MVN_REPO_PASSWORD")
         }
     }
+     */
 }
 
 dependencies {
     implementation("org.spongepowered", "configurate-yaml", "4.2.0-SNAPSHOT")
     implementation("org.incendo", "cloud-paper", "2.0.0-beta.10")
     implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.10")
+    implementation("org.incendo", "cloud-brigadier", "2.0.0-beta.10")
     implementation("xyz.xenondevs.invui", "invui", "1.39")
+    /*("xyz.xenondevs.invui", "inventory-access-r20", "1.39") {
+        artifact {
+            classifier = "remapped-mojang"
+        }
+    }*/
 
-    compileOnly("su.nightexpress.coinsengine", "CoinsEngine", "2.3.3")
+    compileOnly("su.nightexpress.coinsengine", "CoinsEngine", "2.4.0")
+    compileOnly("su.nightexpress.nightcore:nightcore:2.7.1")
     compileOnly("io.papermc.paper", "paper-api", "1.21.1-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl", "VaultAPI", "1.7")
     compileOnly("me.clip", "placeholderapi", "2.11.5")
+
+    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
+}
+
+paperweight {
+    paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 }
 
 bukkit {
@@ -65,19 +83,22 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
-tasks {
-    getByName<Test>("test") {
-        useJUnitPlatform()
-    }
+runPaper {
+    disablePluginJarDetection()
+}
 
-    compileJava {
-        options.encoding = "UTF-8"
-    }
+tasks {
 
     runServer {
+        dependsOn(reobfJar)
         minecraftVersion("1.21.1")
 
+        pluginJars.from(
+            file("build/libs/${project.name}-${project.version}-reobf.jar")
+        )
+
         downloadPlugins {
+
             url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
             url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
             // CoinsEngine
@@ -87,6 +108,14 @@ tasks {
             //hangar("PlaceholderAPI", "2.11.5")
             jvmArgs("-Dcom.mojang.eula.agree=true")
         }
+    }
+
+    getByName<Test>("test") {
+        useJUnitPlatform()
+    }
+
+    compileJava {
+        options.encoding = "UTF-8"
     }
 
     shadowJar {

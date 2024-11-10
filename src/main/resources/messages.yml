@@ -103,4 +103,4 @@ exception:
     regex: "'{input}' does not match '{pattern}'"
     color: "'{input}' is not a valid color"
     duration: "'{input}' is not a duration format"
-    value: "<red>Das ist kein korrektes Format für eine Value\n{error-mark}"
+    value: "Das ist kein korrektes Format für eine Value <error-mark>"
