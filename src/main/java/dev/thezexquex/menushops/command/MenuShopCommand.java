@@ -17,7 +17,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.bukkit.data.ProtoItemStack;
 import org.incendo.cloud.context.CommandContext;
-import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.spongepowered.configurate.NodePath;
 
@@ -34,6 +33,7 @@ import static org.incendo.cloud.parser.standard.IntegerParser.integerParser;
 import static org.incendo.cloud.parser.standard.StringParser.quotedStringParser;
 import static org.incendo.cloud.parser.standard.StringParser.stringParser;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class MenuShopCommand extends BaseCommand {
     public MenuShopCommand(MenuShopsPlugin plugin) {
         super(plugin);
@@ -85,7 +85,7 @@ public class MenuShopCommand extends BaseCommand {
                 .required("shop", shopParser(plugin.shopService()))
                 .literal("setitem")
                 .required("type", enumParser(ShopItem.ItemType.class))
-                .required("id", integerParser(),  this::suggestItems)
+                .required("id", integerParser(), (context3, input3) -> suggestItems(context3))
                 .required("lower-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()))
                 .required("upper-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()));
 
@@ -96,7 +96,7 @@ public class MenuShopCommand extends BaseCommand {
                 .required("shop", shopParser(plugin.shopService()))
                 .literal("insertitembefore")
                 .required("type", enumParser(ShopItem.ItemType.class))
-                .required("id", integerParser(),  this::suggestItems)
+                .required("id", integerParser(), (context2, input2) -> suggestItems(context2))
                 .required("lower-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()))
                 .required("upper-bound", valueParser(plugin.pluginHookService(), plugin.valueRegistry()));
 
@@ -150,7 +150,7 @@ public class MenuShopCommand extends BaseCommand {
                 .required("shop", shopParser(plugin.shopService()))
                 .literal("removeitem")
                 .required("type", enumParser(ShopItem.ItemType.class))
-                .required("id", integerParser(),  this::suggestItems)
+                .required("id", integerParser(), (context1, input1) -> suggestItems(context1))
                 .handler(this::handleEditRemoveItem)
         );
 
@@ -161,7 +161,7 @@ public class MenuShopCommand extends BaseCommand {
                 .required("shop", shopParser(plugin.shopService()))
                 .literal("edititem")
                 .required("type", enumParser(ShopItem.ItemType.class))
-                .required("id", integerParser(), this::suggestItems);
+                .required("id", integerParser(), (context, input) -> suggestItems(context));
 
         // /menushops edit <shop> additem <type> <lower-value> <upper-value>
         commandManager.command(editItemBuilder
@@ -428,7 +428,7 @@ public class MenuShopCommand extends BaseCommand {
         return KeyValue.of(lowerBoundValue, upperBoundValue);
     }
 
-    public CompletableFuture<List<Suggestion>> suggestItems(CommandContext<Player> context, CommandInput input) {
+    public CompletableFuture<List<Suggestion>> suggestItems(CommandContext<Player> context) {
         if (!context.contains("shop")) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }

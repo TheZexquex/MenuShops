@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class ValueTypeSerializer implements TypeSerializer<Value> {
     @Override
-    public Value deserialize(@NotNull Type type, ConfigurationNode node) throws SerializationException {;
+    public Value deserialize(@NotNull Type type, ConfigurationNode node) {
         return ValueParser.fromPattern(Objects.requireNonNull(node.getString()));
     }
 

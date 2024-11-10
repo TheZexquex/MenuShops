@@ -14,8 +14,6 @@ import java.util.logging.Level;
 
 public class ConfigurationLoader {
     private final MenuShopsPlugin plugin;
-    private ConfigurationNode mainConfigRootNode;
-    private ConfigurationNode messageConfigRootNode;
 
     public ConfigurationLoader(MenuShopsPlugin plugin) {
         this.plugin = plugin;

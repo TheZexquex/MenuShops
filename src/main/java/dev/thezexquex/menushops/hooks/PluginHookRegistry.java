@@ -1,17 +1,14 @@
 package dev.thezexquex.menushops.hooks;
 
 import dev.thezexquex.menushops.MenuShopsPlugin;
-import org.bukkit.Server;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class PluginHookRegistry {
-    private final Server server;
     private final Set<Hook> hooks;
 
-    public PluginHookRegistry(Server server) {
-        this.server = server;
+    public PluginHookRegistry() {
         this.hooks = new HashSet<>();
     }
 

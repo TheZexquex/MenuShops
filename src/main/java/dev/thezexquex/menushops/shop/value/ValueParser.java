@@ -132,7 +132,7 @@ public class ValueParser {
                         return valueParserResult;
                     }
                 } catch (NumberFormatException e) {
-                    return valueParserResult = new ValueParserResult(
+                    return new ValueParserResult(
                             ValueParserResultType.INVALID_AMOUNT_NOT_AN_INTEGER,
                             valuePattern.indexOf(possibleAmount),
                             errorPositionEnd

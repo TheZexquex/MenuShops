@@ -53,7 +53,7 @@ public class MenuShopsPlugin extends JavaPlugin {
         this.valueRegistry = new ValueRegistry();
         valueRegistry.registerValue(new MaterialValueType());
 
-        this.pluginHookRegistry = new PluginHookRegistry(getServer());
+        this.pluginHookRegistry = new PluginHookRegistry();
         this.pluginHookRegistry.register(this, new PlaceholderApiHook());
         this.pluginHookRegistry.register(this, new CoinsEngineHook());
         this.pluginHookRegistry.register(this, new VaultHook());

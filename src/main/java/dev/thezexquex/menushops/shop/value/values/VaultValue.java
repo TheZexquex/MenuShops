@@ -3,16 +3,9 @@ package dev.thezexquex.menushops.shop.value.values;
 import dev.thezexquex.menushops.MenuShopsPlugin;
 import dev.thezexquex.menushops.hooks.externalhooks.VaultHook;
 import dev.thezexquex.menushops.shop.ShopAction;
-import dev.thezexquex.menushops.shop.value.Amount;
 import dev.thezexquex.menushops.shop.value.Value;
-import dev.thezexquex.menushops.util.InventoryUtil;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.NodePath;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
 
 public class VaultValue extends Value {
 
@@ -51,7 +44,4 @@ public class VaultValue extends Value {
         return NodePath.path("gui", "value-format", "vault-money");
     }
 
-    public static Iterable<String> suggestions() {
-        return List.of("money");
-    }
 }

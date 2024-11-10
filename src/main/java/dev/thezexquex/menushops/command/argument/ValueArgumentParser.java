@@ -23,7 +23,6 @@ import java.util.*;
 public class ValueArgumentParser<C> implements ArgumentParser<C, Value>, BlockingSuggestionProvider.Strings<C> {
     private final PluginHookRegistry pluginHookRegistry;
     private final ValueRegistry valueRegistry;
-    private final Map<String, Iterable<String>> suggestions = new HashMap<>();
 
     private ValueArgumentParser(PluginHookRegistry pluginHookRegistry, ValueRegistry valueRegistry) {
         this.pluginHookRegistry = pluginHookRegistry;
@@ -31,7 +30,7 @@ public class ValueArgumentParser<C> implements ArgumentParser<C, Value>, Blockin
     }
 
     private static final String CURR_SEP = "#";
-    private static final String AMOU_SEP = ":";
+    private static final String AMOUNT_SEP = ":";
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull Value> parse(
@@ -67,15 +66,15 @@ public class ValueArgumentParser<C> implements ArgumentParser<C, Value>, Blockin
             var splitToken = token.split(CURR_SEP);
             if (splitToken.length == 2) {
                 if (valueType.suggestions().contains(splitToken[1])) {
-                    if (!token.contains(AMOU_SEP)) {
-                        return List.of(token + AMOU_SEP);
+                    if (!token.contains(AMOUNT_SEP)) {
+                        return List.of(token + AMOUNT_SEP);
                     }
                 }
 
-                if (token.contains(AMOU_SEP)) {
-                    var isFirst = token.endsWith(AMOU_SEP);
+                if (token.contains(AMOUNT_SEP)) {
+                    var isFirst = token.endsWith(AMOUNT_SEP);
                     var isDecimalPlace = false;
-                    var splitTokenAmount = token.split(AMOU_SEP);
+                    var splitTokenAmount = token.split(AMOUNT_SEP);
                     if (splitTokenAmount.length == 2 && splitTokenAmount[1].contains(".")) {
                         isDecimalPlace = true;
                     }
@@ -84,7 +83,7 @@ public class ValueArgumentParser<C> implements ArgumentParser<C, Value>, Blockin
             }
         }
 
-        if (token.contains(CURR_SEP) && !token.contains(AMOU_SEP)) {
+        if (token.contains(CURR_SEP) && !token.contains(AMOUNT_SEP)) {
             var suggestions = new ArrayList<String>();
             valueRegistry.getRegistered().stream()
                     .filter(valueType -> valueType.identifier().equals(token.split(CURR_SEP)[0]))

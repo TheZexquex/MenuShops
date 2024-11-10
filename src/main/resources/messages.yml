@@ -1,6 +1,7 @@
 prefix: "<white>[<gradient:#32a852:#32a8a2>MenuShops<white>] "
 
 command:
+  # noinspection SpellCheckingInspection
   menushops:
     reload:
       attempt: "<prefix><gray>Attempting to reload..."
@@ -71,6 +72,7 @@ gui:
     vault-money: "<gold><amount> <gray>x <gold><material>"
     coinsengine:
       money: "<gold><amount> $"
+      # noinspection SpellCheckingInspection
       votecoins: "<gold><amount> VC"
 
 action:

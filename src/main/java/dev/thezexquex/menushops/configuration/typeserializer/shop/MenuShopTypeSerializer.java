@@ -3,9 +3,9 @@ package dev.thezexquex.menushops.configuration.typeserializer.shop;
 import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.gui.DefaultValues;
-import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -16,7 +16,7 @@ import java.util.*;
 public class MenuShopTypeSerializer implements TypeSerializer<MenuShop> {
 
     @Override
-    public MenuShop deserialize(Type type, ConfigurationNode node) throws SerializationException {
+    public MenuShop deserialize(@NotNull Type type, ConfigurationNode node) throws SerializationException {
         var titleString = node.node("title").getString();
         var title = MiniMessage.miniMessage().deserialize(titleString == null ? "<red>N/A title" : titleString);
         var outerStructureList = node.node("structure-outer").getList(String.class);
@@ -41,7 +41,7 @@ public class MenuShopTypeSerializer implements TypeSerializer<MenuShop> {
     }
 
     @Override
-    public void serialize(Type type, @Nullable MenuShop menuShop, ConfigurationNode node) throws SerializationException {
+    public void serialize(@NotNull Type type, @Nullable MenuShop menuShop, @NotNull ConfigurationNode node) throws SerializationException {
         if (menuShop != null) {
             node.node("title").set(MiniMessage.miniMessage().serialize(menuShop.title()));
             node.node("structure-outer").set(Arrays.asList(menuShop.outerStructure()));

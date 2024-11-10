@@ -4,6 +4,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -13,7 +14,7 @@ import java.lang.reflect.Type;
 public class IconTypeSerializer implements TypeSerializer<ItemStack> {
 
     @Override
-    public ItemStack deserialize(Type type, ConfigurationNode node) throws SerializationException {
+    public ItemStack deserialize(@NotNull Type type, ConfigurationNode node) throws SerializationException {
         var material = Material.valueOf(node.node("material").getString());
         var amount = node.node("amount").getInt(1);
 
@@ -45,7 +46,7 @@ public class IconTypeSerializer implements TypeSerializer<ItemStack> {
     }
 
     @Override
-    public void serialize(Type type, @Nullable ItemStack obj, ConfigurationNode node) throws SerializationException {
+    public void serialize(@NotNull Type type, @Nullable ItemStack obj, @NotNull ConfigurationNode node) {
 
     }
 }

@@ -1,6 +1,5 @@
 package dev.thezexquex.menushops.util;
 
-import dev.thezexquex.menushops.shop.ShopAction;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

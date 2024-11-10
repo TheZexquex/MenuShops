@@ -10,8 +10,8 @@ import java.util.*;
 public class MenuShop {
     private String identifier;
     private Component title;
-    private String[] outerStructure;
-    private String[] innerStructure;
+    private final String[] outerStructure;
+    private final String[] innerStructure;
     private final LinkedList<ShopItem> shopSellsItems;
     private final LinkedList<ShopItem> shopBuysItems;
 
@@ -76,16 +76,8 @@ public class MenuShop {
         return outerStructure;
     }
 
-    public void outerStructure(String[] outerStructure) {
-        this.outerStructure = outerStructure;
-    }
-
     public String[] innerStructure() {
         return innerStructure;
-    }
-
-    public void innerStructure(String[] innerStructure) {
-        this.innerStructure = innerStructure;
     }
 
     public String identifier() {
@@ -112,7 +104,7 @@ public class MenuShop {
         if (type == ShopItem.ItemType.SHOP_SELLS) {
             shopSellsItems.addLast(shopItem);
             return;
-        };
+        }
         shopBuysItems.addLast(shopItem);
     }
 

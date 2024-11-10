@@ -1,9 +1,7 @@
 package dev.thezexquex.menushops.shop.gui.item;
 
 import dev.thezexquex.menushops.message.Messenger;
-import dev.thezexquex.menushops.util.MiniComponent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.NodePath;
 import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;

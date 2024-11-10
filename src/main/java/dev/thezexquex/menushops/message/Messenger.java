@@ -156,10 +156,6 @@ public class Messenger {
         this.broadcastToPlayers(plugin.getServer().getOnlinePlayers(), path, tagResolvers);
     }
 
-    public ConfigurationNode rootNode() {
-        return rootNode;
-    }
-
     public MenuShopsPlugin plugin() {
         return plugin;
     }

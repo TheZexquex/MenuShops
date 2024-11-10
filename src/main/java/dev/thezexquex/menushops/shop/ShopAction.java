@@ -7,10 +7,7 @@ import org.bukkit.event.inventory.ClickType;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class ShopAction {
-    private ShopItem shopItem;
-    private Type type;
-
+public record ShopAction(ShopItem shopItem, ShopAction.Type type) {
     public enum Type {
         CURRENT, STACK, INVENTORY
     }
@@ -22,19 +19,6 @@ public class ShopAction {
             return new ShopAction(shopItem, ShopAction.Type.INVENTORY);
         }
         return new ShopAction(shopItem, ShopAction.Type.CURRENT);
-    }
-
-    public ShopAction(ShopItem shopItem, Type type) {
-        this.shopItem = shopItem;
-        this.type = type;
-    }
-
-    public Type type() {
-        return type;
-    }
-
-    public ShopItem shopItem() {
-        return shopItem;
     }
 
     public double combinedValueBuys(double originalAmount, Player player) {

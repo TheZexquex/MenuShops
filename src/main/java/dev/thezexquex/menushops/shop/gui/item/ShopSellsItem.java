@@ -86,9 +86,7 @@ public class ShopSellsItem extends AbstractItem {
         );
 
         switch (shopAction.type()) {
-            case CURRENT -> {
-                player.getInventory().addItem(shopItem.itemStack());
-            }
+            case CURRENT -> player.getInventory().addItem(shopItem.itemStack());
             case STACK -> {
                 var itemToAdd = shopItem.itemStack();
                 itemToAdd.setAmount(itemToAdd.getMaxStackSize());

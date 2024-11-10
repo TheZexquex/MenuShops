@@ -5,9 +5,7 @@ import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.gui.item.NextPageItem;
 import dev.thezexquex.menushops.shop.gui.item.ChangeShopModeItem;
 import dev.thezexquex.menushops.shop.gui.item.PrevPageItem;
-import dev.thezexquex.menushops.util.MiniComponent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.NodePath;
@@ -16,15 +14,11 @@ import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.gui.TabGui;
 import xyz.xenondevs.invui.gui.structure.Markers;
 import xyz.xenondevs.invui.gui.structure.Structure;
-import xyz.xenondevs.invui.item.Item;
-import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.SimpleItem;
 import xyz.xenondevs.invui.window.Window;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MenuShopGui {
     public static Window constructGui(Player player, MenuShop menuShop, Messenger messenger, HashMap<Character, ItemStack> icons) {
