@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "dev.thezexquex"
-version = "0.1.1"
+version = "0.2.0"
 
 val mainClass = "${group}.${rootProject.name.lowercase()}.MenuShopsPlugin"
 val shadeBasePath = "${group}.${rootProject.name.lowercase()}.libs."
@@ -24,14 +24,6 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 
     maven("https://repo.unknowncity.de/public")
-    /*maven {
-        url = uri("https://repo.unknowncity.de/private")
-        credentials (PasswordCredentials::class) {
-            username = System.getenv("MVN_REPO_USERNAME")
-            password = System.getenv("MVN_REPO_PASSWORD")
-        }
-    }
-     */
 }
 
 dependencies {
@@ -40,11 +32,6 @@ dependencies {
     implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.10")
     implementation("org.incendo", "cloud-brigadier", "2.0.0-beta.10")
     implementation("xyz.xenondevs.invui", "invui", "1.39")
-    /*("xyz.xenondevs.invui", "inventory-access-r20", "1.39") {
-        artifact {
-            classifier = "remapped-mojang"
-        }
-    }*/
 
     compileOnly("su.nightexpress.coinsengine", "CoinsEngine", "2.4.0")
     compileOnly("su.nightexpress.nightcore:nightcore:2.7.1")
