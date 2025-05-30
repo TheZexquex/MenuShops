@@ -1,49 +1,49 @@
 package dev.thezexquex.menushops.shop.gui.item;
 
 import dev.thezexquex.menushops.message.Messenger;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import dev.thezexquex.menushops.util.GuiPlaceholders;
+import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.NodePath;
-import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
-import xyz.xenondevs.invui.gui.PagedGui;
+import xyz.xenondevs.invui.Click;
+import xyz.xenondevs.invui.item.AbstractPagedGuiBoundItem;
+import xyz.xenondevs.invui.item.ItemBuilder;
 import xyz.xenondevs.invui.item.ItemProvider;
-import xyz.xenondevs.invui.item.builder.ItemBuilder;
-import xyz.xenondevs.invui.item.impl.controlitem.PageItem;
 
-public class PrevPageItem extends PageItem {
+public class PrevPageItem extends AbstractPagedGuiBoundItem {
     private final ItemStack displayItem;
     private final Messenger messenger;
 
     public PrevPageItem(ItemStack displayItem, Messenger messenger) {
-        super(false);
         this.displayItem = displayItem;
         this.messenger = messenger;
     }
 
     @Override
-    public ItemProvider getItemProvider(PagedGui<?> gui) {
+    public @NotNull ItemProvider getItemProvider(@NotNull Player player) {
+        boolean hasPrevPage = getGui().getPage() > 1;
         var builder = new ItemBuilder(displayItem);
-        builder.setDisplayName(new AdventureComponentWrapper(messenger.component(
-                        NodePath.path("gui", "item", "prev-page", "display-name",
-                                gui.hasPreviousPage() ? "has-prev" : "no-prev"),
-                        Placeholder.parsed("next-page", String.valueOf(gui.getCurrentPage() + 2)),
-                        Placeholder.parsed("prev-page", String.valueOf(gui.getCurrentPage())),
-                        Placeholder.parsed("curr-page", String.valueOf(gui.getCurrentPage() + 1)),
-                        Placeholder.parsed("max-page", String.valueOf(gui.getPageAmount()))
-                )))
-                .addLoreLines(messenger.componentList(
-                                        NodePath.path("gui", "item", "prev-page", "lore",
-                                                gui.hasPreviousPage() ? "has-prev" : "no-prev"),
-                                        Placeholder.parsed("next-page", String.valueOf(gui.getCurrentPage() + 2)),
-                                        Placeholder.parsed("prev-page", String.valueOf(gui.getCurrentPage())),
-                                        Placeholder.parsed("curr-page", String.valueOf(gui.getCurrentPage() + 1)),
-                                        Placeholder.parsed("max-page", String.valueOf(gui.getPageAmount()))
-                                )
-                                .stream()
-                                .map(AdventureComponentWrapper::new)
-                                .toArray(AdventureComponentWrapper[]::new)
-                );
+
+        var lore = messenger.componentList(NodePath.path("gui", "item", "prev-page", "lore", hasPrevPage ? "has-prev" : "no-prev"),
+                GuiPlaceholders.paged(getGui())
+        ).toArray(Component[]::new);
+
+        var name = messenger.component(
+                NodePath.path("gui", "item", "prev-page", "display-name", hasPrevPage ? "has-prev" : "no-prev"),
+                GuiPlaceholders.paged(getGui())
+        );
+
+
+        builder.setName(name).addLoreLines(lore);
 
         return builder;
+    }
+
+    @Override
+    public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull Click click) {
+        getGui().setPage(getGui().getPage() - 1);
     }
 }

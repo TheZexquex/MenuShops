@@ -2,19 +2,19 @@ package dev.thezexquex.menushops.shop.gui;
 
 import dev.thezexquex.menushops.message.Messenger;
 import dev.thezexquex.menushops.shop.MenuShop;
-import dev.thezexquex.menushops.shop.gui.item.NextPageItem;
 import dev.thezexquex.menushops.shop.gui.item.ChangeShopModeItem;
+import dev.thezexquex.menushops.shop.gui.item.NextPageItem;
 import dev.thezexquex.menushops.shop.gui.item.PrevPageItem;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.NodePath;
-import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
+import xyz.xenondevs.invui.gui.Markers;
 import xyz.xenondevs.invui.gui.PagedGui;
+import xyz.xenondevs.invui.gui.Structure;
 import xyz.xenondevs.invui.gui.TabGui;
-import xyz.xenondevs.invui.gui.structure.Markers;
-import xyz.xenondevs.invui.gui.structure.Structure;
-import xyz.xenondevs.invui.item.impl.SimpleItem;
+import xyz.xenondevs.invui.item.Item;
+import xyz.xenondevs.invui.state.MutableProperty;
 import xyz.xenondevs.invui.window.Window;
 
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public class MenuShopGui {
 
 
         // The gui that sells items to the player
-        var sellGuiBuilder = PagedGui.items().setStructure(innerSellsStructure)
+        var sellGuiBuilder = PagedGui.itemsBuilder().setStructure(innerSellsStructure)
                 .addIngredient('>', nextPageItem)
                 .addIngredient('<', prevPageItem)
                 .addIngredient('R', buyBackItem)
@@ -58,14 +58,14 @@ public class MenuShopGui {
 
         icons.forEach((character, itemStack) -> {
             if (!isReserved(character)) {
-                sellGuiBuilder.addIngredient(character, new SimpleItem(itemStack));
+                sellGuiBuilder.addIngredient(character, Item.simple(itemStack));
             }
         });
 
         var sellGui = sellGuiBuilder.build();
 
         // The gui that buys items from the player
-        var buyGuiBuilder = PagedGui.items().setStructure(innerBuysStructure)
+        var buyGuiBuilder = PagedGui.itemsBuilder().setStructure(innerBuysStructure)
                 .addIngredient('>', nextPageItem)
                 .addIngredient('<', prevPageItem)
                 .addIngredient('R', buyBackItem)
@@ -74,36 +74,38 @@ public class MenuShopGui {
 
         icons.forEach((character, itemStack) -> {
             if (!isReserved(character)) {
-                buyGuiBuilder.addIngredient(character, new SimpleItem(itemStack));
+                buyGuiBuilder.addIngredient(character, Item.simple(itemStack));
             }
         });
 
         var buyGui = buyGuiBuilder.build();
 
         // The frame that contains both
-        var outerGuiBuilder = TabGui.normal().setStructure(outerStructure)
+        var outerGuiBuilder = TabGui.builder().setStructure(outerStructure)
                 .addIngredient('S', sellsTabItem)
                 .addIngredient('B', buysTabItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
-                .addTab(sellGui)
-                .addTab(buyGui);
+                .setTab(MutableProperty.of(1))
+                .setTabs(List.of(
+                        sellGui, buyGui
+                ));
 
         icons.forEach((character, itemStack) -> {
             if (!isReserved(character)) {
-                outerGuiBuilder.addIngredient(character, new SimpleItem(itemStack));
+                outerGuiBuilder.addIngredient(character, Item.simple(itemStack));
             }
         });
 
         var outerGui = outerGuiBuilder.build();
 
 
-        return Window.single()
+        return Window.builder()
                 .setViewer(player)
-                .setGui(outerGui)
-                .setTitle(new AdventureComponentWrapper(messenger.component(
+                .setUpperGui(outerGui)
+                .setTitle(messenger.component(
                         NodePath.path("gui", "title", "shop-sells"),
                         Placeholder.component("shop-title", menuShop.title()))
-                ))
+                )
                 .build();
     }
 
@@ -111,5 +113,4 @@ public class MenuShopGui {
         var reservedChars = List.of('<', '>', '.', 'S', 'B', 'R');
         return reservedChars.contains(c);
     }
-
 }

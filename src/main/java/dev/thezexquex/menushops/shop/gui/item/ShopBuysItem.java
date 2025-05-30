@@ -12,16 +12,16 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.NodePath;
+import xyz.xenondevs.invui.Click;
+import xyz.xenondevs.invui.item.AbstractBoundItem;
+import xyz.xenondevs.invui.item.ItemBuilder;
 import xyz.xenondevs.invui.item.ItemProvider;
-import xyz.xenondevs.invui.item.builder.ItemBuilder;
-import xyz.xenondevs.invui.item.impl.AbstractItem;
 
-public class ShopBuysItem extends AbstractItem {
+public class ShopBuysItem extends AbstractBoundItem {
     private final ItemStack itemStack;
     private final MenuShop menuShop;
     private final Messenger messenger;
@@ -33,12 +33,12 @@ public class ShopBuysItem extends AbstractItem {
     }
 
     @Override
-    public ItemProvider getItemProvider() {
+    public @NotNull ItemProvider getItemProvider(@NotNull Player player) {
         return new ItemBuilder(itemStack);
     }
 
     @Override
-    public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent inventoryClickEvent) {
+    public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull Click click) {
         var itemId = itemStack.getItemMeta().getPersistentDataContainer().get(ShopItem.SHOP_ITEM_ID_KEY, PersistentDataType.INTEGER);
         var shopItem = menuShop.shopBuysItems().get(itemId);
 
