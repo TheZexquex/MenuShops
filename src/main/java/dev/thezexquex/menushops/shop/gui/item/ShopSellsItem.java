@@ -13,7 +13,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +23,7 @@ import xyz.xenondevs.invui.item.ItemBuilder;
 import xyz.xenondevs.invui.item.ItemProvider;
 
 import java.util.Arrays;
+import java.util.logging.Level;
 
 public class ShopSellsItem extends AbstractBoundItem {
     private final ItemStack itemStack;
@@ -44,6 +44,12 @@ public class ShopSellsItem extends AbstractBoundItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull Click click) {
         var itemId = itemStack.getItemMeta().getPersistentDataContainer().get(ShopItem.SHOP_ITEM_ID_KEY, PersistentDataType.INTEGER);
+
+        if (itemId == null) {
+            messenger.plugin().getLogger().log(Level.SEVERE, "Shop contains unmapped Item. (%s) This should never happen, please contact the plugin developer".formatted(itemStack.displayName()));
+            return;
+        }
+
         var shopItem = menuShop.shopSellsItems().get(itemId);
 
         var shopAction = ShopAction.of(clickType, shopItem);

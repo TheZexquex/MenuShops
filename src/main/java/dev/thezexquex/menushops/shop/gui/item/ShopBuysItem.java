@@ -21,6 +21,8 @@ import xyz.xenondevs.invui.item.AbstractBoundItem;
 import xyz.xenondevs.invui.item.ItemBuilder;
 import xyz.xenondevs.invui.item.ItemProvider;
 
+import java.util.logging.Level;
+
 public class ShopBuysItem extends AbstractBoundItem {
     private final ItemStack itemStack;
     private final MenuShop menuShop;
@@ -40,6 +42,12 @@ public class ShopBuysItem extends AbstractBoundItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull Click click) {
         var itemId = itemStack.getItemMeta().getPersistentDataContainer().get(ShopItem.SHOP_ITEM_ID_KEY, PersistentDataType.INTEGER);
+
+        if (itemId == null) {
+            messenger.plugin().getLogger().log(Level.SEVERE, "Shop contains unmapped Item. (%s) This should never happen, please contact the plugin developer".formatted(itemStack.displayName()));
+            return;
+        }
+
         var shopItem = menuShop.shopBuysItems().get(itemId);
 
         var shopAction = ShopAction.of(clickType, shopItem);

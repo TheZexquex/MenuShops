@@ -14,7 +14,6 @@ import xyz.xenondevs.invui.gui.PagedGui;
 import xyz.xenondevs.invui.gui.Structure;
 import xyz.xenondevs.invui.gui.TabGui;
 import xyz.xenondevs.invui.item.Item;
-import xyz.xenondevs.invui.state.MutableProperty;
 import xyz.xenondevs.invui.window.Window;
 
 import java.util.HashMap;
@@ -57,7 +56,7 @@ public class MenuShopGui {
                 .setContent(menuShop.shopSellsGuiItems(messenger));
 
         icons.forEach((character, itemStack) -> {
-            if (!isReserved(character)) {
+            if (isNotReserved(character)) {
                 sellGuiBuilder.addIngredient(character, Item.simple(itemStack));
             }
         });
@@ -73,7 +72,7 @@ public class MenuShopGui {
                 .setContent(menuShop.shopBuysGuiItems(messenger));
 
         icons.forEach((character, itemStack) -> {
-            if (!isReserved(character)) {
+            if (isNotReserved(character)) {
                 buyGuiBuilder.addIngredient(character, Item.simple(itemStack));
             }
         });
@@ -85,13 +84,12 @@ public class MenuShopGui {
                 .addIngredient('S', sellsTabItem)
                 .addIngredient('B', buysTabItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
-                .setTab(MutableProperty.of(1))
                 .setTabs(List.of(
                         sellGui, buyGui
                 ));
 
         icons.forEach((character, itemStack) -> {
-            if (!isReserved(character)) {
+            if (isNotReserved(character)) {
                 outerGuiBuilder.addIngredient(character, Item.simple(itemStack));
             }
         });
@@ -109,8 +107,8 @@ public class MenuShopGui {
                 .build();
     }
 
-    private static boolean isReserved(char c) {
+    private static boolean isNotReserved(char c) {
         var reservedChars = List.of('<', '>', '.', 'S', 'B', 'R');
-        return reservedChars.contains(c);
+        return !reservedChars.contains(c);
     }
 }
