@@ -115,10 +115,6 @@ public class ShopService {
     }
 
     public boolean saveShop(MenuShop menuShop) {
-        logger.info(menuShop.hashCode() + " " + loadedShops.get(menuShop));
-        loadedShops.forEach((shop, path) -> {
-           logger.info(shop.hashCode() + " " + path);
-        });
         return saveShop(menuShop, loadedShops.get(menuShop));
     }
 
