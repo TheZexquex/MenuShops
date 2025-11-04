@@ -1,5 +1,6 @@
 package dev.thezexquex.menushops.command.argument;
 
+import dev.thezexquex.menushops.MenuShopsPlugin;
 import dev.thezexquex.menushops.command.AdditionalCaptionKeys;
 import dev.thezexquex.menushops.data.ShopService;
 import dev.thezexquex.menushops.shop.MenuShop;
@@ -19,20 +20,20 @@ import java.util.concurrent.CompletableFuture;
 
 public class ShopParser<C> implements ArgumentParser<C, MenuShop> {
 
-    private final ShopService shopService;
+    private final MenuShopsPlugin plugin;
 
-    public ShopParser(ShopService shopService) {
-        this.shopService = shopService;
+    public ShopParser(MenuShopsPlugin plugin) {
+        this.plugin = plugin;
     }
 
-    public static <C> ParserDescriptor<C, MenuShop> shopParser(ShopService shopService) {
-        return ParserDescriptor.of(new ShopParser<>(shopService), MenuShop.class);
+    public static <C> ParserDescriptor<C, MenuShop> shopParser(MenuShopsPlugin plugin) {
+        return ParserDescriptor.of(new ShopParser<>(plugin), MenuShop.class);
     }
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull MenuShop> parse(@NonNull CommandContext<@NonNull C> commandContext, @NonNull CommandInput commandInput) {
         var possibleShop = commandInput.readString();
-        var shopOpt = shopService.getShop(possibleShop);
+        var shopOpt = plugin.shopService().getShop(possibleShop);
         return shopOpt.map(ArgumentParseResult::success).orElseGet(() ->
                 ArgumentParseResult.failure(new ShopParseException(possibleShop, commandContext)));
     }
@@ -40,7 +41,7 @@ public class ShopParser<C> implements ArgumentParser<C, MenuShop> {
     @Override
     public @NonNull SuggestionProvider<C> suggestionProvider() {
         return (context, input) ->
-                CompletableFuture.completedFuture(shopService.loadedShopNames().stream().map(Suggestion::suggestion).toList());
+                CompletableFuture.completedFuture(plugin.shopService().loadedShopNames().stream().map(Suggestion::suggestion).toList());
     }
 
     public static final class ShopParseException extends ParserException {

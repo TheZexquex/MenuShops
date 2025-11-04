@@ -6,11 +6,11 @@ plugins {
     id("de.eldoria.plugin-yml.bukkit") version "0.7.1"
     id("xyz.jpenilla.run-paper") version "2.3.1"
 
-    id("io.papermc.paperweight.userdev") version "1.7.4"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
 }
 
 group = "dev.thezexquex"
-version = "0.2.0"
+version = "0.2.1"
 
 val mainClass = "${group}.${rootProject.name.lowercase()}.MenuShopsPlugin"
 val shadeBasePath = "${group}.${rootProject.name.lowercase()}.libs."
@@ -22,24 +22,24 @@ repositories {
     maven("https://repo.xenondevs.xyz/releases")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://repo.nightexpressdev.com/releases")
 
     maven("https://repo.unknowncity.de/public")
 }
 
 dependencies {
     implementation("org.spongepowered", "configurate-yaml", "4.2.0-SNAPSHOT")
-    implementation("org.incendo", "cloud-paper", "2.0.0-beta.10")
-    implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.10")
-    implementation("org.incendo", "cloud-brigadier", "2.0.0-beta.10")
-    implementation("xyz.xenondevs.invui", "invui", "2.0.0-alpha.12")
+    implementation("org.incendo", "cloud-paper", "2.0.0-beta.13")
+    implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.13")
+    implementation("org.incendo", "cloud-brigadier", "2.0.0-beta.13")
+    implementation("xyz.xenondevs.invui", "invui", "2.0.0-alpha.20")
 
-    compileOnly("su.nightexpress.coinsengine", "CoinsEngine", "2.4.0")
-    compileOnly("su.nightexpress.nightcore:nightcore:2.7.1")
-    compileOnly("io.papermc.paper", "paper-api", "1.21.1-R0.1-SNAPSHOT")
-    compileOnly("com.github.MilkBowl", "VaultAPI", "1.7")
+    compileOnly("su.nightexpress.coinsengine", "CoinsEngine", "2.5.3")
+    compileOnly("io.papermc.paper", "paper-api", "1.21.10-R0.1-SNAPSHOT")
+    compileOnly("com.github.MilkBowl", "VaultAPI", "1.7.1")
     compileOnly("me.clip", "placeholderapi", "2.11.5")
 
-    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.10-R0.1-SNAPSHOT")
 }
 
 paperweight {
@@ -78,7 +78,7 @@ tasks {
 
     runServer {
         dependsOn(reobfJar)
-        minecraftVersion("1.21.1")
+        minecraftVersion("1.21.10")
 
         pluginJars.from(
             file("build/libs/${project.name}-${project.version}-reobf.jar")
@@ -87,11 +87,11 @@ tasks {
         downloadPlugins {
 
             url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
-            url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
+            // url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
             // CoinsEngine
             url("https://api.spiget.org/v2/resources/84121/download")
             // NightCore
-            url("https://github.com/nulli0n/nightcore-spigot/releases/download/v2.7.0-beta/nightcore-2.7.0.jar")
+            url("https://github.com/nulli0n/nightcore-spigot/releases/download/v2.9.4/nightcore-2.9.4.jar")
             //hangar("PlaceholderAPI", "2.11.5")
             jvmArgs("-Dcom.mojang.eula.agree=true")
         }

@@ -32,6 +32,7 @@ public class ShopService {
     }
 
     public void loadAllShops() throws IOException {
+        loadedShops.clear();
         try (var paths = Files.list(shopConfigsFolder)) {
             var fileNames = paths.filter(Files::isRegularFile)
                     .map(Path::toFile)
@@ -74,10 +75,6 @@ public class ShopService {
         }
     }
 
-    public Map<MenuShop, Path> loadedShops() {
-        return loadedShops;
-    }
-
     public List<String> loadedShopNames() {
         return loadedShops.keySet().stream().map(MenuShop::identifier).toList();
     }
@@ -118,6 +115,10 @@ public class ShopService {
     }
 
     public boolean saveShop(MenuShop menuShop) {
+        logger.info(menuShop.hashCode() + " " + loadedShops.get(menuShop));
+        loadedShops.forEach((shop, path) -> {
+           logger.info(shop.hashCode() + " " + path);
+        });
         return saveShop(menuShop, loadedShops.get(menuShop));
     }
 
