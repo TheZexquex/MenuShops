@@ -32,7 +32,7 @@ dependencies {
     implementation("org.incendo", "cloud-paper", "2.0.0-beta.13")
     implementation("org.incendo", "cloud-minecraft-extras", "2.0.0-beta.13")
     implementation("org.incendo", "cloud-brigadier", "2.0.0-beta.13")
-    implementation("xyz.xenondevs.invui", "invui", "2.0.0-alpha.20")
+    implementation("xyz.xenondevs.invui", "invui", "2.0.0-alpha.17")
 
     compileOnly("su.nightexpress.coinsengine", "CoinsEngine", "2.5.3")
     compileOnly("io.papermc.paper", "paper-api", "1.21.10-R0.1-SNAPSHOT")

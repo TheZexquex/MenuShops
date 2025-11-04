@@ -36,7 +36,6 @@ public class NextPageItem extends AbstractPagedGuiBoundItem {
                 GuiPlaceholders.paged(getGui())
         );
 
-
         builder.setName(name).addLoreLines(lore);
 
         return builder;
@@ -45,5 +44,6 @@ public class NextPageItem extends AbstractPagedGuiBoundItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull Click click) {
         getGui().setPage(getGui().getPage() + 1);
+        player.playSound(player.getLocation(), "item.book.page_turn", 1, 1);
     }
 }

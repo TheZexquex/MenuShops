@@ -25,8 +25,6 @@ public class MenuShopGui {
         var innerSellsStructure = new Structure(menuShop.innerStructure());
         var innerBuysStructure = new Structure(menuShop.innerStructure());
 
-        var nextPageItem = new NextPageItem(icons.get('>'), messenger);
-        var prevPageItem = new PrevPageItem(icons.get('<'), messenger);
         var buyBackItem = icons.get('R');
         var sellsTabItem = new ChangeShopModeItem(
                 0,
@@ -49,8 +47,8 @@ public class MenuShopGui {
 
         // The gui that sells items to the player
         var sellGuiBuilder = PagedGui.itemsBuilder().setStructure(innerSellsStructure)
-                .addIngredient('>', nextPageItem)
-                .addIngredient('<', prevPageItem)
+                .addIngredient('>', new NextPageItem(icons.get('>'), messenger))
+                .addIngredient('<', new PrevPageItem(icons.get('<'), messenger))
                 .addIngredient('R', buyBackItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
                 .setContent(menuShop.shopSellsGuiItems(messenger));
@@ -65,8 +63,8 @@ public class MenuShopGui {
 
         // The gui that buys items from the player
         var buyGuiBuilder = PagedGui.itemsBuilder().setStructure(innerBuysStructure)
-                .addIngredient('>', nextPageItem)
-                .addIngredient('<', prevPageItem)
+                .addIngredient('>', new NextPageItem(icons.get('>'), messenger))
+                .addIngredient('<', new PrevPageItem(icons.get('<'), messenger))
                 .addIngredient('R', buyBackItem)
                 .addIngredient('.', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
                 .setContent(menuShop.shopBuysGuiItems(messenger));

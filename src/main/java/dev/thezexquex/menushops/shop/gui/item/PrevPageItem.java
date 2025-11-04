@@ -24,7 +24,7 @@ public class PrevPageItem extends AbstractPagedGuiBoundItem {
 
     @Override
     public @NotNull ItemProvider getItemProvider(@NotNull Player player) {
-        boolean hasPrevPage = getGui().getPage() > 1;
+        boolean hasPrevPage = getGui().getPage() > 0;
         var builder = new ItemBuilder(displayItem);
 
         var lore = messenger.componentList(NodePath.path("gui", "item", "prev-page", "lore", hasPrevPage ? "has-prev" : "no-prev"),
@@ -45,5 +45,6 @@ public class PrevPageItem extends AbstractPagedGuiBoundItem {
     @Override
     public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull Click click) {
         getGui().setPage(getGui().getPage() - 1);
+        player.playSound(player.getLocation(), "item.book.page_turn", 1, 1);
     }
 }
