@@ -60,8 +60,6 @@ public class ValueArgumentParser<C> implements ArgumentParser<C, Value>, Blockin
     public @NonNull Iterable<@NonNull String> stringSuggestions(@NonNull CommandContext<C> commandContext, @NonNull CommandInput input) {
         var token = input.readString();
 
-        System.out.println("'" + token + "'");
-
         for (ValueType valueType : valueRegistry.getRegistered()) {
             var splitToken = token.split(CURR_SEP);
             if (splitToken.length == 2) {
