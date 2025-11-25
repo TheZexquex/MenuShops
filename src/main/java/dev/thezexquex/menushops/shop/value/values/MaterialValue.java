@@ -19,7 +19,7 @@ public class MaterialValue extends Value {
 
     @Override
     public void withdraw(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = shopAction.combinedValueSells(amount, player);
+        var actualAmount = shopAction.combinedValueSells(amount, player, plugin);
 
         InventoryUtil.removeSpecificItemCount(player, new ItemStack(material), (int) actualAmount);
     }
@@ -33,9 +33,14 @@ public class MaterialValue extends Value {
 
     @Override
     public boolean hasEnough(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = shopAction.combinedValueSells(amount, player);
+        var actualAmount = shopAction.combinedValueSells(amount, player, plugin);
 
         return InventoryUtil.hasEnoughItems(player, new ItemStack(material), (int) actualAmount);
+    }
+
+    @Override
+    public int maxAmountCanAfford(Player player, MenuShopsPlugin plugin) {
+        return (int) (InventoryUtil.getCurrentAmountFor(player, new ItemStack(material)) / amount);
     }
 
     @Override

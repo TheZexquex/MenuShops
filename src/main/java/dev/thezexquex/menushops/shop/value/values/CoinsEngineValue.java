@@ -3,6 +3,7 @@ package dev.thezexquex.menushops.shop.value.values;
 import dev.thezexquex.menushops.MenuShopsPlugin;
 import dev.thezexquex.menushops.hooks.externalhooks.CoinsEngineHook;
 import dev.thezexquex.menushops.shop.ShopAction;
+import dev.thezexquex.menushops.shop.ShopItem;
 import dev.thezexquex.menushops.shop.value.Value;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.NodePath;
@@ -17,7 +18,7 @@ public class CoinsEngineValue extends Value {
 
     @Override
     public void withdraw(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = shopAction.combinedValueSells(amount, player);
+        var actualAmount = shopAction.combinedValueSells(amount, player, plugin);
 
         var curr = CoinsEngineAPI.getCurrency(currency);
         if (curr != null) {
@@ -38,13 +39,22 @@ public class CoinsEngineValue extends Value {
 
     @Override
     public boolean hasEnough(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = shopAction.combinedValueSells(amount, player);
+        var actualAmount = shopAction.combinedValueSells(amount, player, plugin);
 
         var curr = CoinsEngineAPI.getCurrency(currency);
         if (curr == null) {
             return false;
         }
         return CoinsEngineAPI.getBalance(player, curr) >= actualAmount;
+    }
+
+    @Override
+    public int maxAmountCanAfford(Player player, MenuShopsPlugin plugin) {
+        var curr = CoinsEngineAPI.getCurrency(currency);
+        if (curr == null) {
+            return 0;
+        }
+        return (int) (CoinsEngineAPI.getBalance(player, curr) / amount());
     }
 
     @Override

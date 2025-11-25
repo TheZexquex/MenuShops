@@ -15,7 +15,7 @@ public class VaultValue extends Value {
 
     @Override
     public void withdraw(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = shopAction.combinedValueSells(amount, player);
+        var actualAmount = shopAction.combinedValueSells(amount, player, plugin);
 
         plugin.vaultEconomy().withdrawPlayer(player, actualAmount);
     }
@@ -29,9 +29,14 @@ public class VaultValue extends Value {
 
     @Override
     public boolean hasEnough(Player player, MenuShopsPlugin plugin, ShopAction shopAction) {
-        var actualAmount = shopAction.combinedValueSells(amount, player);
+        var actualAmount = shopAction.combinedValueSells(amount, player, plugin);
 
         return plugin.vaultEconomy().has(player, actualAmount);
+    }
+
+    @Override
+    public int maxAmountCanAfford(Player player, MenuShopsPlugin plugin) {
+        return (int) (plugin.vaultEconomy().getBalance(player) / amount);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package dev.thezexquex.menushops.shop.gui.item;
 
+import dev.thezexquex.menushops.MenuShopsPlugin;
 import dev.thezexquex.menushops.message.Messenger;
 import dev.thezexquex.menushops.shop.MenuShop;
 import dev.thezexquex.menushops.shop.ShopAction;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.NodePath;
 import xyz.xenondevs.invui.Click;
@@ -61,22 +63,21 @@ public class ShopSellsItem extends AbstractBoundItem {
             return;
         }
 
-        if (InventoryUtil.hasNoSpaceInInventory(player, itemStack, shopAction.itemCountSells(player))) {
+        if (InventoryUtil.hasNoSpaceInInventory(player, itemStack, shopAction.itemCountSells(player, JavaPlugin.getPlugin(MenuShopsPlugin.class)))) {
             messenger.sendMessage(player, NodePath.path("action", "buy", "inventory-full"));
             return;
         }
 
-        if (!currentValue.hasEnough(player, messenger.plugin(), shopAction)) {
+        if (!currentValue.hasEnough(player, messenger.plugin(), shopAction) || shopAction.itemCountSells(player, JavaPlugin.getPlugin(MenuShopsPlugin.class)) < 1) {
             messenger.sendMessage(player, NodePath.path("action", "buy", "price-too-high"));
             return;
         }
 
-        currentValue.withdraw(player, messenger.plugin(), shopAction);
         messenger.sendMessage(
                 player,
                 NodePath.path("action", "buy", "success"),
                 TagResolver.resolver(
-                        Placeholder.parsed("amount", String.valueOf(shopAction.itemCountSells(player))),
+                        Placeholder.parsed("amount", String.valueOf(shopAction.itemCountSells(player, JavaPlugin.getPlugin(MenuShopsPlugin.class)))),
                         Placeholder.component("item-name",
                                 shopItem.itemStack().getItemMeta().hasDisplayName() ?
                                         shopItem.itemStack().displayName() :
@@ -88,32 +89,20 @@ public class ShopSellsItem extends AbstractBoundItem {
                                 Placeholder.parsed("material",
                                         (currentValue instanceof MaterialValue materialValue) ?
                                                 materialValue.material().name() : ""),
-                                Placeholder.parsed("amount", String.valueOf(shopAction.combinedValueSells(currentValue.amount(), player)))
+                                Placeholder.parsed("amount", String.valueOf(shopAction.combinedValueSells(currentValue.amount(), player, JavaPlugin.getPlugin(MenuShopsPlugin.class))))
                         ))))
         );
 
         switch (shopAction.type()) {
             case CURRENT -> player.getInventory().addItem(shopItem.itemStack());
-            case STACK -> {
+            case STACK, INVENTORY -> {
                 var itemToAdd = shopItem.itemStack();
-                itemToAdd.setAmount(itemToAdd.getMaxStackSize());
+                itemToAdd.setAmount(shopAction.itemCountSells(player, JavaPlugin.getPlugin(MenuShopsPlugin.class)));
                 player.getInventory().addItem(itemToAdd);
             }
-            case INVENTORY -> {
-                var itemToAdd = shopItem.itemStack();
-                itemToAdd.setAmount(itemToAdd.getMaxStackSize());
-
-                Arrays.stream(player.getInventory().getStorageContents()).forEach(item -> {
-                    if (item == null) {
-                        player.getInventory().addItem(itemToAdd);
-                    } else {
-                        if (item.isSimilar(itemToAdd)) {
-                            item.setAmount(item.getMaxStackSize());
-                        }
-                    }
-                });
-            }
         }
+
+        currentValue.withdraw(player, messenger.plugin(), shopAction);
 
         player.playSound(Sound.sound(Key.key("entity.experience_orb.pickup"), Sound.Source.MASTER, 1, 1));
     }

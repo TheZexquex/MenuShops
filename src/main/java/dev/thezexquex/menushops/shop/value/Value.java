@@ -2,6 +2,7 @@ package dev.thezexquex.menushops.shop.value;
 
 import dev.thezexquex.menushops.MenuShopsPlugin;
 import dev.thezexquex.menushops.shop.ShopAction;
+import dev.thezexquex.menushops.shop.ShopItem;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.NodePath;
 
@@ -15,6 +16,8 @@ public abstract class Value {
     public abstract void withdraw(Player player, MenuShopsPlugin plugin, ShopAction action);
     public abstract void deposit(Player player, MenuShopsPlugin plugin, ShopAction shopAction);
     public abstract boolean hasEnough(Player player, MenuShopsPlugin plugin, ShopAction shopAction);
+    public abstract int maxAmountCanAfford(Player player, MenuShopsPlugin plugin);
+
     public abstract boolean isAvailable(MenuShopsPlugin plugin);
     public abstract NodePath formatNode();
     public double amount() {

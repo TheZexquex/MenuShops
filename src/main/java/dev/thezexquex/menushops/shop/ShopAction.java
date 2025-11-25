@@ -1,6 +1,8 @@
 package dev.thezexquex.menushops.shop;
 
+import dev.thezexquex.menushops.MenuShopsPlugin;
 import dev.thezexquex.menushops.util.InventoryUtil;
+import dev.thezexquex.menushops.util.ShopUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
@@ -30,11 +32,11 @@ public record ShopAction(ShopItem shopItem, ShopAction.Type type) {
         };
     }
 
-    public double combinedValueSells(double originalAmount, Player player) {
+    public double combinedValueSells(double originalAmount, Player player, MenuShopsPlugin plugin) {
         return switch (type) {
             case CURRENT -> originalAmount;
             case STACK, INVENTORY -> BigDecimal.valueOf(
-                    originalAmount / shopItem.itemStack().getAmount() * itemCountSells(player)
+                    originalAmount / shopItem.itemStack().getAmount() * itemCountSells(player, plugin)
             ).setScale(2, RoundingMode.HALF_DOWN).doubleValue();
         };
     }
@@ -47,11 +49,11 @@ public record ShopAction(ShopItem shopItem, ShopAction.Type type) {
         };
     }
 
-    public int itemCountSells(Player player) {
+    public int itemCountSells(Player player, MenuShopsPlugin plugin) {
         return switch (type) {
             case CURRENT -> shopItem.itemStack().getAmount();
-            case STACK -> shopItem.itemStack().getMaxStackSize();
-            case INVENTORY -> InventoryUtil.getMaxEmptySpaceFor(player, shopItem.itemStack());
+            case STACK -> ShopUtil.getMaxBuyAmountStack(shopItem, player, plugin, shopItem.itemStack().getMaxStackSize());
+            case INVENTORY -> ShopUtil.getMaxBuyAmount(shopItem, player, plugin);
         };
     }
 }
