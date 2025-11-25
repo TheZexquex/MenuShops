@@ -8,7 +8,7 @@
 `/menushops reload` Reloads the configuration, the shops and the external Hooks. (See Hooks)<br>
 `/menushops create <shop-name> "<shop-title>"` Creates a new MenuShop with a custom title (supports [MiniMessage](https://docs.advntr.dev/minimessage/index.html))<br>
 `/menushops delete <shop-name>` Deletes a MenuShop<br>
-`/menushops edit <shop-name> additem <buy|sell> <lower-bound> <upper-bound>` Adds the item that the player is currently holding in their hand to a MenuShop. For <lower-bound> and <upper-bound> see Values<br>
+`/menushops edit <shop-name> additem <shop_buys|shop_sells> <lower-bound> <upper-bound> <@hand | <itemstack> <id>>` Adds the item that the player is currently holding in their hand to a MenuShop. For <lower-bound> and <upper-bound> see Values<br>
 `/menushops edit <shop-name> removeitem <buy|sell> <id>` Removes a item from a MenuShop<br>
 
 ## Hooks
